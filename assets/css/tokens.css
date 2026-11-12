@@ -1,0 +1,159 @@
+/* Websign · Design-Tokens
+   Eine Schriftfamilie, zwei Gewichte, vier Flächen, eine Aktionsfarbe, ein Standard-Easing.
+   Hell ist die Basis; dunkle Sektionen setzen data-theme="dark". */
+
+:root {
+  /* Schrift */
+  --font: system-ui, -apple-system, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --weight-regular: 400;
+  --weight-medium: 500; /* nur Navigations-Tabs */
+  --weight-bold: 600;
+
+  /* Typo-Rollen (L, ab 1069 px) */
+  --statement-size: 96px;   --statement-line: 100px;   --statement-track: -0.015em;
+  --hero-size: 80px;        --hero-line: 84px;         --hero-track: -0.015em;
+  --headline-xl-size: 64px; --headline-xl-line: 68px;  --headline-xl-track: -0.009em;
+  --headline-l-size: 56px;  --headline-l-line: 60px;   --headline-l-track: -0.005em;
+  --section-size: 48px;     --section-line: 52px;      --section-track: -0.003em;
+  --headline-s-size: 40px;  --headline-s-line: 44px;   --headline-s-track: 0em;
+  --eyebrow-l-size: 32px;   --eyebrow-l-line: 36px;    --eyebrow-l-track: 0.004em;
+  --card-size: 28px;        --card-line: 32px;         --card-track: 0.007em;
+  --intro-size: 21px;       --intro-line: 29px;        --intro-track: 0.011em;
+  --subhead-size: 21px;     --subhead-line: 25px;      --subhead-track: 0.011em;
+  --body-size: 17px;        --body-line: 25px;         --body-track: -0.022em;
+  --body-s-size: 14px;      --body-s-line: 20px;       --body-s-track: -0.016em;
+  --caption-size: 12px;     --caption-line: 16px;      --caption-track: -0.01em;
+  --stat-size: 48px;        --stat-line: 48px;
+
+  /* Farbe · hell */
+  --text-primary: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary: #86868b;
+  --link: #2e4a7e;
+  --action: #4766a0;          /* Websign-Blau: Primärbutton, Auswahl */
+  --action-hover: #5474b0;
+  --on-action: #ffffff;
+  --focus: #4766a0;
+  --surface: #ffffff;
+  --surface-alt: #f5f5f7;
+  --surface-raised: #fafafc;
+  --line: #d2d2d7;
+  --line-soft: #e8e8ed;
+  --badge-new: #b64400;
+  --success: #008009;
+  --error: #e30000;
+
+  /* Marke (aus dem Logo-Sheet gemessen) */
+  --brand-navy: #284172;
+  --brand-blue: #4766a0;
+  --brand-ice: #c6d2e5;
+
+  /* Materialien */
+  --glass: rgba(250, 250, 252, 0.8);
+  --glass-filter: saturate(180%) blur(20px);
+  --control-pill: rgba(42, 42, 45, 0.72);
+  --curtain: rgba(232, 232, 237, 0.4);
+  --shadow-shop: 2px 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* Layout */
+  --band: min(1260px, 87.5%);
+  --gutter: calc(50% - min(1260px, 87.5%) / 2);
+  --grid-gap: 24px;
+  --tile-gap: 12px;
+  --section-pad: 144px;
+  --header-gap: 48px;
+  --nav-height: 48px;
+  --hit: 44px;
+
+  /* Radien */
+  --r-button: 980px;
+  --r-tab: 170px;
+  --r-card: 28px;
+  --r-tile: 18px;
+  --r-form: 12px;
+  --r-badge: 6px;
+
+  /* Bewegung */
+  --ease-standard: cubic-bezier(0.4, 0, 0.6, 1);
+  --ease-content: cubic-bezier(0.25, 0.1, 0.3, 1);
+  --ease-media: cubic-bezier(0.28, 0.11, 0.32, 1);
+  --ease-hover: cubic-bezier(0, 0, 0.5, 1);
+  --dur-micro: 160ms;
+  --dur-short: 240ms;
+  --dur-ui: 320ms;
+  --dur-text: 600ms;
+  --dur-slide: 800ms;
+  --reveal-move: 700ms;
+  --reveal-fade: 900ms;
+  --reveal-stagger: 150ms;
+  --reveal-distance: 30px;
+  --hover-scale: 1.016;
+}
+
+[data-theme="dark"] {
+  --text-primary: #f5f5f7;
+  --text-secondary: #86868b;
+  --text-tertiary: #6e6e73;
+  --link: #9eb1d2;
+  --focus: #9eb1d2;
+  --surface: #000000;
+  --surface-alt: #1d1d1f;
+  --surface-raised: #161617;
+  --line: #424245;
+  --line-soft: #2a2a2d;
+  --badge-new: #f56300;
+  --glass: rgba(22, 22, 23, 0.8);
+  --curtain: rgba(0, 0, 0, 0.5);
+}
+
+/* M · 735–1068 px */
+@media (max-width: 1068px) {
+  :root {
+    --statement-size: 64px;   --statement-line: 68px;   --statement-track: -0.009em;
+    --hero-size: 64px;        --hero-line: 68px;        --hero-track: -0.009em;
+    --headline-xl-size: 48px; --headline-xl-line: 52px; --headline-xl-track: -0.003em;
+    --headline-l-size: 48px;  --headline-l-line: 52px;  --headline-l-track: -0.003em;
+    --section-size: 40px;     --section-line: 44px;     --section-track: 0em;
+    --headline-s-size: 32px;  --headline-s-line: 36px;  --headline-s-track: 0.004em;
+    --eyebrow-l-size: 28px;   --eyebrow-l-line: 32px;   --eyebrow-l-track: 0.007em;
+    --card-size: 24px;        --card-line: 28px;        --card-track: 0.009em;
+    --intro-size: 19px;       --intro-line: 27px;
+    --subhead-size: 19px;     --subhead-line: 23px;
+    --stat-size: 40px;        --stat-line: 40px;
+    --section-pad: 112px;
+  }
+}
+
+/* S · bis 734 px */
+@media (max-width: 734px) {
+  :root {
+    --statement-size: 40px;   --statement-line: 44px;   --statement-track: 0em;
+    --hero-size: 40px;        --hero-line: 44px;        --hero-track: 0em;
+    --headline-xl-size: 40px; --headline-xl-line: 44px; --headline-xl-track: 0em;
+    --headline-l-size: 32px;  --headline-l-line: 36px;  --headline-l-track: 0.004em;
+    --section-size: 32px;     --section-line: 36px;     --section-track: 0.004em;
+    --headline-s-size: 28px;  --headline-s-line: 32px;  --headline-s-track: 0.007em;
+    --eyebrow-l-size: 24px;   --eyebrow-l-line: 28px;   --eyebrow-l-track: 0.009em;
+    --card-size: 21px;        --card-line: 25px;        --card-track: 0.011em;
+    --intro-size: 17px;       --intro-line: 25px;
+    --subhead-size: 17px;     --subhead-line: 21px;
+    --stat-size: 32px;        --stat-line: 32px;
+    --section-pad: 80px;
+    --header-gap: 32px;
+  }
+}
+
+/* Deckende Flächen statt Glas, wenn Transparenz reduziert werden soll oder der Filter fehlt */
+@media (prefers-reduced-transparency: reduce) {
+  :root { --glass: #fafafc; --control-pill: #2a2a2d; --curtain: rgba(232, 232, 237, 0.9); --glass-filter: none; }
+  [data-theme="dark"] { --glass: #161617; --curtain: rgba(0, 0, 0, 0.9); }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root { --glass: #fafafc; --control-pill: #2a2a2d; }
+  [data-theme="dark"] { --glass: #161617; }
+}
+
+@media (prefers-contrast: more) {
+  :root { --text-secondary: #424245; --text-tertiary: #424245; --line: #6e6e73; }
+  [data-theme="dark"] { --text-secondary: #d2d2d7; --text-tertiary: #d2d2d7; --line: #86868b; }
+}
