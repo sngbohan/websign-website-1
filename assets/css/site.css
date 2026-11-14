@@ -442,6 +442,9 @@ p + p { margin-top: 0.8em; }
 .legal h2 { margin-top: 1.6em; }
 .legal p, .legal ul { margin-top: 0.8em; max-width: 720px; }
 .legal ul { list-style: disc; padding-left: 1.2em; }
+.legal li + li { margin-top: 0.3em; }
+.legal a { text-decoration: underline; text-underline-offset: 0.18em; }
+.notice { margin-top: 24px; padding: 16px 20px; max-width: 720px; border: 1px solid var(--line); border-radius: var(--r-tile); background: var(--surface-alt); color: var(--text-primary); }
 
 /* ---------- Reveal (ein Standard für alles) ---------- */
 .js [data-reveal] [data-reveal-item] {

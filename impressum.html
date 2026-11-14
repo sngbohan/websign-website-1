@@ -10,7 +10,13 @@
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/liquid-glass.css">
-  <script>document.documentElement.className='js';</script>
+  <script>
+    (function (c) {
+      c.remove('no-js'); c.add('js');
+      // Entwicklungsmodus (nur lokal, nur mit ?dev): offene Stellen bleiben als orange Platzhalter sichtbar
+      if (/[?&]dev(=|&|$)/.test(location.search) && /^(localhost|127\.0\.0\.1|\[::1\])?$/.test(location.hostname)) c.add('dev');
+    })(document.documentElement.classList);
+  </script>
   <script type="module" src="assets/js/main.js"></script>
 </head>
 <body>
@@ -29,18 +35,36 @@
     </nav>
   </header>
   <main id="inhalt">
+    <!--
+      VORLAGE · vor Veröffentlichung rechtlich prüfen lassen.
+      Alle Angaben kommen aus assets/js/config.js (legal, contact). Pflicht nach § 5 DDG: legal.name, legal.street,
+      legal.city, contact.email. Solange eine davon fehlt, zeigt die Seite nur den Hinweis und tools/check.mjs schlägt fehl.
+      Bei der Prüfung klären:
+      · Rechtsform, Vertretungsberechtigte und Registereintrag (bei GmbH, UG, e. K. usw.) gehören in legal.name bzw. als eigene Zeile.
+      · Ein zweiter schneller Kontaktweg neben der E-Mail (contact.phone) wird empfohlen.
+      · § 18 Abs. 2 MStV (legal.responsible) gilt nur bei journalistisch-redaktionellen Inhalten.
+      · Hinweis zur Verbraucherstreitbeilegung (§ 36 VSBG) und berufsrechtliche Angaben, falls sie dich betreffen.
+      · Die Angaben werden per JavaScript eingesetzt. Wer das nicht möchte, trägt sie zusätzlich fest in dieses HTML ein.
+    -->
     <section class="section legal" data-theme="light">
       <div class="band">
         <h1 class="t-section">Impressum.</h1>
-        <p class="muted"><mark class="ph">[Entwurf: Angaben ergänzen und vor Veröffentlichung rechtlich prüfen lassen]</mark></p>
-        <h2 class="t-card">Anbieter</h2>
-        <p><span data-config="legal.name"><mark class="ph">[NAME ODER FIRMA]</mark></span><br><span data-config="legal.street"><mark class="ph">[STRASSE UND HAUSNUMMER]</mark></span><br><span data-config="legal.city"><mark class="ph">[PLZ UND ORT]</mark></span></p>
-        <h2 class="t-card">Kontakt</h2>
-        <p>E-Mail: <span data-config="contact.email"><mark class="ph">[E-MAIL]</mark></span><br>Telefon: <span data-config="contact.phone"><mark class="ph">[TELEFON]</mark></span></p>
-        <h2 class="t-card">Umsatzsteuer</h2>
-        <p>Umsatzsteuer-Identifikationsnummer: <span data-config="legal.vatId"><mark class="ph">[UST-IDNR. ODER HINWEIS, FALLS KEINE VORHANDEN]</mark></span></p>
-        <h2 class="t-card">Inhaltlich verantwortlich</h2>
-        <p><span data-config="legal.responsible"><mark class="ph">[NAME UND ANSCHRIFT DER VERANTWORTLICHEN PERSON]</mark></span></p>
+        <p class="notice" data-requires-not="legal.complete"><strong>Diese Angaben werden gerade ergänzt.</strong></p>
+        <noscript><p class="notice">Diese Seite setzt die Angaben mit JavaScript ein. Bitte aktiviere JavaScript, um sie zu lesen.</p></noscript>
+        <div data-requires="legal.complete">
+          <h2 class="t-card">Angaben gemäß § 5 DDG</h2>
+          <p><span data-config="legal.name"><mark class="ph">[NAME ODER FIRMA]</mark></span><br><span data-config="legal.street"><mark class="ph">[STRASSE UND HAUSNUMMER]</mark></span><br><span data-config="legal.city"><mark class="ph">[PLZ UND ORT]</mark></span></p>
+          <h2 class="t-card">Kontakt</h2>
+          <p>E-Mail: <a data-email-link><span data-config="contact.email"><mark class="ph">[E-MAIL]</mark></span></a><span data-requires="contact.phone"><br>Telefon: <a data-tel-link><span data-config="contact.phone"><mark class="ph">[TELEFON]</mark></span></a></span></p>
+          <div data-requires="legal.vatId">
+            <h2 class="t-card">Umsatzsteuer-ID</h2>
+            <p>Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz: <span data-config="legal.vatId"><mark class="ph">[UST-IDNR.]</mark></span></p>
+          </div>
+          <div data-requires="legal.responsible">
+            <h2 class="t-card">Inhaltlich verantwortlich</h2>
+            <p>Verantwortlich nach § 18 Abs. 2 MStV: <span data-config="legal.responsible"><mark class="ph">[NAME UND ANSCHRIFT DER VERANTWORTLICHEN PERSON]</mark></span></p>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -52,7 +76,7 @@
         <span aria-current="page">Impressum</span>
       </nav>
       <div class="footer__legal">
-        <p>Copyright © 2026 Websign <span data-config="legal.owner"><mark class="ph">[INHABER/RECHTSFORM]</mark></span>. Alle Rechte vorbehalten.</p>
+        <p>Copyright © 2026 Websign<span data-requires="legal.owner"> <span data-config="legal.owner"><mark class="ph">[INHABER/RECHTSFORM]</mark></span></span>. Alle Rechte vorbehalten.</p>
         <ul>
           <li><a href="impressum.html">Impressum</a></li>
           <li><a href="datenschutz.html">Datenschutz</a></li>

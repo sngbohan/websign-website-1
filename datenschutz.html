@@ -10,7 +10,13 @@
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/liquid-glass.css">
-  <script>document.documentElement.className='js';</script>
+  <script>
+    (function (c) {
+      c.remove('no-js'); c.add('js');
+      // Entwicklungsmodus (nur lokal, nur mit ?dev): offene Stellen bleiben als orange Platzhalter sichtbar
+      if (/[?&]dev(=|&|$)/.test(location.search) && /^(localhost|127\.0\.0\.1|\[::1\])?$/.test(location.hostname)) c.add('dev');
+    })(document.documentElement.classList);
+  </script>
   <script type="module" src="assets/js/main.js"></script>
 </head>
 <body>
@@ -29,24 +35,66 @@
     </nav>
   </header>
   <main id="inhalt">
+    <!--
+      VORLAGE · vor Veröffentlichung rechtlich prüfen lassen.
+      Aufbau nach Art. 13 DSGVO. Angaben zum Verantwortlichen kommen aus assets/js/config.js (legal, contact).
+      Bei der Prüfung klären:
+      · Hosting: Der Text beschreibt GitHub Pages (legal.hosting). Bei einem anderen Anbieter Absatz und config anpassen.
+        Aussagen zu Server-Protokollen und zum EU-U.S. Data Privacy Framework mit der aktuellen GitHub-Datenschutzerklärung abgleichen.
+      · Projektanfrage: Ohne form.endpoint läuft der Versand über das E-Mail-Programm des Besuchers. Mit form.endpoint
+        erscheint der Absatz zum Formular-Dienst; dann legal.formProcessor füllen und einen Vertrag zur Auftragsverarbeitung schließen.
+      · Rechtsgrundlagen, Speicherdauer und die zuständige Aufsichtsbehörde (legal.authority).
+      · Werden später Analyse, Videos von Dritten oder ein Termin-Dienst eingebunden, muss diese Erklärung ergänzt werden.
+    -->
     <section class="section legal" data-theme="light">
       <div class="band">
         <h1 class="t-section">Datenschutz.</h1>
-        <p class="muted"><mark class="ph">[Entwurf: Angaben ergänzen und vor Veröffentlichung rechtlich prüfen lassen]</mark></p>
+        <p class="notice" data-requires-not="legal.complete"><strong>Diese Angaben werden gerade ergänzt.</strong> Die Angaben zum Verantwortlichen folgen.</p>
+
         <h2 class="t-card">Das Wichtigste in Kürze</h2>
         <ul>
           <li>Diese Website setzt keine Cookies und speichert nichts in deinem Browser.</li>
           <li>Sie lädt keine Schriften, Skripte oder Medien von Dritten und nutzt kein Tracking.</li>
           <li>Persönliche Angaben verarbeiten wir nur, wenn du uns eine Projektanfrage schickst.</li>
         </ul>
-        <h2 class="t-card">Verantwortlich</h2>
-        <p><span data-config="legal.name"><mark class="ph">[NAME ODER FIRMA]</mark></span><br><span data-config="legal.street"><mark class="ph">[STRASSE UND HAUSNUMMER]</mark></span><br><span data-config="legal.city"><mark class="ph">[PLZ UND ORT]</mark></span><br>E-Mail: <span data-config="contact.email"><mark class="ph">[E-MAIL]</mark></span></p>
-        <h2 class="t-card">Hosting</h2>
-        <p>Die Website liegt bei <span data-config="legal.hosting"><mark class="ph">[HOSTING-ANBIETER MIT ANSCHRIFT]</mark></span>. <mark class="ph">[Angaben zu Server-Protokollen, Speicherdauer und Auftragsverarbeitung laut Anbieter ergänzen]</mark></p>
+
+        <div data-requires="legal.complete">
+          <h2 class="t-card">Verantwortlicher</h2>
+          <p>Verantwortlich für die Datenverarbeitung auf dieser Website im Sinne der Datenschutz-Grundverordnung (DSGVO):</p>
+          <p><span data-config="legal.name"><mark class="ph">[NAME ODER FIRMA]</mark></span><br><span data-config="legal.street"><mark class="ph">[STRASSE UND HAUSNUMMER]</mark></span><br><span data-config="legal.city"><mark class="ph">[PLZ UND ORT]</mark></span><br>E-Mail: <a data-email-link><span data-config="contact.email"><mark class="ph">[E-MAIL]</mark></span></a><span data-requires="contact.phone"><br>Telefon: <a data-tel-link><span data-config="contact.phone"><mark class="ph">[TELEFON]</mark></span></a></span></p>
+        </div>
+        <noscript><p class="notice">Die Angaben zum Verantwortlichen werden mit JavaScript eingesetzt. Du findest sie auch im <a href="impressum.html">Impressum</a>.</p></noscript>
+
+        <h2 class="t-card">Hosting und Server-Protokolle</h2>
+        <p>Diese Website liegt bei GitHub Pages<span data-requires="legal.hosting">, einem Dienst von <span data-config="legal.hosting"><mark class="ph">[HOSTING-ANBIETER MIT ANSCHRIFT]</mark></span></span>. Wenn du eine Seite aufrufst, verarbeitet GitHub technisch notwendige Daten in Server-Protokollen: deine IP-Adresse, Datum und Uhrzeit des Abrufs, die abgerufene Datei und Angaben, die dein Browser mitschickt.</p>
+        <p>Das dient der Auslieferung und der Sicherheit der Website. Rechtsgrundlage ist unser berechtigtes Interesse an einem stabilen und sicheren Betrieb (Art. 6 Abs. 1 lit. f DSGVO). Die Daten können dabei in den USA verarbeitet werden. GitHub ist nach eigenen Angaben unter dem EU-U.S. Data Privacy Framework zertifiziert. Wie lange GitHub die Protokolle speichert, legt GitHub fest. Wir haben keinen Zugriff darauf und werten sie nicht aus.</p>
+
         <h2 class="t-card">Projektanfrage</h2>
-        <p>Wenn du den Konfigurator abschickst, erhalten wir deine Auswahl, deinen Namen, deine E-Mail-Adresse und deine Nachricht. Wir nutzen diese Angaben ausschließlich, um deine Anfrage zu beantworten. <mark class="ph">[Rechtsgrundlage, Speicherdauer und Versandweg (E-Mail-Programm oder Formular-Dienst) ergänzen]</mark></p>
+        <p>Wenn du uns über den Konfigurator eine Anfrage schickst, verarbeiten wir deine Auswahl (Projektart, Ausgangslage, Umfang, Extras, Zeitrahmen), deinen Namen, deine E-Mail-Adresse und deine Nachricht. Wir nutzen diese Angaben ausschließlich, um deine Anfrage zu beantworten und ein Angebot vorzubereiten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO: Die Verarbeitung ist nötig, um auf deine Anfrage hin ein Angebot zu erstellen.</p>
+        <p data-requires-not="form.endpoint"><strong>Versandweg.</strong> Der Konfigurator öffnet dein eigenes E-Mail-Programm mit der fertigen Anfrage. Erst wenn du dort auf Senden klickst, erreicht uns die Nachricht, und zwar über deinen und unseren E-Mail-Anbieter. Die Website selbst überträgt dabei nichts.</p>
+        <p data-requires="form.endpoint"><strong>Versandweg.</strong> Deine Anfrage wird verschlüsselt an einen Formular-Dienst übertragen, der sie an uns weiterleitet.<span data-requires="legal.formProcessor"> Dienstleister: <span data-config="legal.formProcessor"><mark class="ph">[FORMULAR-DIENST MIT ANSCHRIFT]</mark></span>.</span></p>
+        <p><strong>Speicherdauer.</strong> Wir löschen deine Anfrage, sobald sie erledigt ist und keine gesetzlichen Aufbewahrungspflichten dagegen sprechen. Wird daraus ein Auftrag, gelten die gesetzlichen Fristen für Geschäftsunterlagen.</p>
+
+        <h2 class="t-card">Cookies, Speicher und Dienste Dritter</h2>
+        <p>Diese Website setzt keine Cookies und nutzt weder localStorage noch sessionStorage. Schrift, Skripte, Bilder und das 3D-Modell werden von derselben Adresse geladen wie die Seite selbst. Es gibt keine Analyse, keine Werbung und keine eingebetteten Inhalte von Dritten. Deshalb brauchst du hier auch nichts zu bestätigen.</p>
+
         <h2 class="t-card">Deine Rechte</h2>
-        <p><mark class="ph">[Betroffenenrechte nach DSGVO und zuständige Aufsichtsbehörde ergänzen]</mark></p>
+        <p>Du hast gegenüber uns folgende Rechte an deinen personenbezogenen Daten:</p>
+        <ul>
+          <li>Auskunft über die Daten, die wir von dir verarbeiten (Art. 15 DSGVO)</li>
+          <li>Berichtigung unrichtiger Daten (Art. 16 DSGVO)</li>
+          <li>Löschung (Art. 17 DSGVO)</li>
+          <li>Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
+          <li>Datenübertragbarkeit (Art. 20 DSGVO)</li>
+          <li>Widerspruch gegen eine Verarbeitung, die auf berechtigtem Interesse beruht (Art. 21 DSGVO)</li>
+          <li>Widerruf einer erteilten Einwilligung mit Wirkung für die Zukunft (Art. 7 Abs. 3 DSGVO)</li>
+        </ul>
+        <p data-requires="contact.email">Dafür genügt eine formlose Nachricht an <a data-email-link><span data-config="contact.email"><mark class="ph">[E-MAIL]</mark></span></a>.</p>
+
+        <h2 class="t-card">Beschwerderecht</h2>
+        <p>Du kannst dich bei einer Datenschutz-Aufsichtsbehörde beschweren, wenn du meinst, dass wir deine Daten nicht rechtmäßig verarbeiten (Art. 77 DSGVO). Zuständig ist zum Beispiel die Behörde an deinem Wohnort.<span data-requires="legal.authority"> Für uns zuständig: <span data-config="legal.authority"><mark class="ph">[AUFSICHTSBEHÖRDE]</mark></span>.</span></p>
+
+        <p class="muted t-body-s">Stand: 14.11.2026</p>
       </div>
     </section>
   </main>
@@ -58,7 +106,7 @@
         <span aria-current="page">Datenschutz</span>
       </nav>
       <div class="footer__legal">
-        <p>Copyright © 2026 Websign <span data-config="legal.owner"><mark class="ph">[INHABER/RECHTSFORM]</mark></span>. Alle Rechte vorbehalten.</p>
+        <p>Copyright © 2026 Websign<span data-requires="legal.owner"> <span data-config="legal.owner"><mark class="ph">[INHABER/RECHTSFORM]</mark></span></span>. Alle Rechte vorbehalten.</p>
         <ul>
           <li><a href="impressum.html">Impressum</a></li>
           <li><a href="datenschutz.html">Datenschutz</a></li>

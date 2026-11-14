@@ -15,7 +15,7 @@ const dev = local && new URLSearchParams(location.search).has('dev');
 document.documentElement.classList.toggle('dev', dev);
 
 // Ein Wert gilt als vorhanden, wenn er nicht leer ist. Listen brauchen einen Eintrag, Gruppen mindestens einen gefüllten Wert.
-const present = (v) => v != null && v !== '' && (Array.isArray(v) ? v.length > 0 : typeof v === 'object' ? Object.values(v).some(present) : true);
+const present = (v) => v != null && v !== '' && v !== false && (Array.isArray(v) ? v.length > 0 : typeof v === 'object' ? Object.values(v).some(present) : true);
 const get = (path) => {
   path = path.replace(/^config\./, '');
   if (path === 'legal.complete') return REQUIRED_LEGAL.every((p) => present(get(p)));
