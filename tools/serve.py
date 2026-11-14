@@ -11,11 +11,13 @@ tools/playground.html im Browser rendert (OG-Bild, Icons, später Standbilder):
 Gespeichert wird ausschließlich unter assets/media/ und assets/img/, und nur mit
 Bild-Endungen. Der Server läuft nicht auf GitHub Pages und gehört nicht zur Website.
 """
+import gzip
 import os
 import sys
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 ROOT = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+GZIP_EXT = ('.html', '.css', '.js', '.mjs', '.json', '.svg', '.xml', '.txt', '.webmanifest', '.vtt', '.bin')
 SAVE_DIRS = ('assets/media/', 'assets/img/')
 SAVE_EXT = ('.jpg', '.png', '.webp', '.avif')
 MAX_BYTES = 8 * 1024 * 1024
@@ -36,6 +38,25 @@ class Handler(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('Cache-Control', 'no-store')
         super().end_headers()
+
+    def do_GET(self):
+        # Textdateien und das 3D-Modell gzip-komprimiert senden, so wie GitHub Pages es tut.
+        # Damit stimmen lokal gemessene Übertragungsgrößen und Ladezeiten mit der echten Seite überein.
+        path = self.translate_path(self.path)
+        if os.path.isdir(path):
+            path = os.path.join(path, 'index.html')
+        ext = os.path.splitext(path)[1].lower()
+        if ext in GZIP_EXT and os.path.isfile(path) and 'gzip' in self.headers.get('Accept-Encoding', ''):
+            with open(path, 'rb') as fh:
+                body = gzip.compress(fh.read(), 6)
+            self.send_response(200)
+            self.send_header('Content-Type', self.guess_type(path))
+            self.send_header('Content-Encoding', 'gzip')
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        super().do_GET()
 
     def do_PUT(self):
         prefix = '/__save/'
