@@ -19,6 +19,8 @@
       var c = d.documentElement.classList;
       c.remove('no-js'); c.add('js');
       if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) c.add('reduced-motion');
+      // Entwicklungsmodus (nur lokal, nur mit ?dev): offene Stellen bleiben als orange Platzhalter sichtbar
+      if (/[?&]dev(=|&|$)/.test(location.search) && /^(localhost|127\.0\.0\.1|\[::1\])?$/.test(location.hostname)) c.add('dev');
       // Sicherheitsnetz: Lädt das Skript nicht, fällt die Seite auf die Variante ohne JavaScript zurück
       window.__wsFallback = function () { if (!window.__wsReady) { c.remove('js'); c.add('no-js'); } };
       setTimeout(window.__wsFallback, 4000);
@@ -48,7 +50,7 @@
       <ul class="nav__links" data-scrollspy>
         <li><a href="#leistungen">Leistungen</a></li>
         <li><a href="#material">3D</a></li>
-        <li><a href="#projekte">Projekte</a></li>
+        <li data-requires="projects"><a href="#projekte">Projekte</a></li>
         <li><a href="#ablauf">Ablauf</a></li>
       </ul>
       <div class="nav__end">
@@ -69,7 +71,7 @@
     <ul class="menu__list">
       <li style="--i:0"><a class="t-card" href="#leistungen">Leistungen</a></li>
       <li style="--i:1"><a class="t-card" href="#material">3D</a></li>
-      <li style="--i:2"><a class="t-card" href="#projekte">Projekte</a></li>
+      <li style="--i:2" data-requires="projects"><a class="t-card" href="#projekte">Projekte</a></li>
       <li style="--i:3"><a class="t-card" href="#ablauf">Ablauf</a></li>
       <li style="--i:4"><a class="t-card" href="#konfigurator">Projekt konfigurieren</a></li>
     </ul>
@@ -92,7 +94,7 @@
           <a class="lg lg--xl" href="#konfigurator" data-track="cta-hero-konfigurator">Projekt konfigurieren</a>
         </p>
         <p class="hero__meta" data-reveal-item>
-          <span>Dein Richtpreis in fünf Schritten.</span>
+          <span data-requires="pricing.types">Dein Richtpreis in fünf Schritten.</span><span data-requires-not="pricing.types">Dein Projekt in fünf Schritten.</span>
           <a class="link link--chevron" href="#leistungen" data-track="cta-hero-leistungen">Leistungen ansehen</a>
         </p>
       </div>
@@ -204,8 +206,8 @@
       </div>
     </section>
 
-    <!-- 6 · Projekte -->
-    <section class="section" id="projekte" data-theme="dark" data-section="projekte" data-reveal>
+    <!-- 6 · Projekte: nur sichtbar, wenn config.projects echte Projekte enthält. Die Platzhalterkarten erscheinen nur mit ?dev. -->
+    <section class="section" id="projekte" data-theme="dark" data-section="projekte" data-reveal data-requires="projects">
       <div class="band">
         <div class="section-header">
           <h2 class="t-section" data-reveal-item>Projekte.</h2>
@@ -320,7 +322,7 @@
       <div class="band">
         <div class="lockup" style="margin-bottom:var(--header-gap)">
           <h2 class="t-section" data-reveal-item>Projekt konfigurieren.</h2>
-          <p class="t-subhead muted" data-reveal-item>Fünf Schritte, eine Zahl. Am Ende siehst du deinen Richtpreis<sup class="fn"><a href="#fn-5" id="fnref-5" aria-label="Fußnote 5">5</a></sup> und kannst direkt anfragen.</p>
+          <p class="t-subhead muted" data-reveal-item>Fünf Schritte bis zur Anfrage. <span data-requires="pricing.types">Am Ende siehst du deinen Richtpreis</span><span data-requires-not="pricing.types">Danach bekommst du deinen Richtpreis per E-Mail</span><sup class="fn"><a href="#fn-5" id="fnref-5" aria-label="Fußnote 5">5</a></sup>.</p>
         </div>
 
         <div class="config" data-reveal-item>
@@ -374,7 +376,8 @@
               </div>
             </fieldset>
 
-            <fieldset class="config__step" data-step="contact" id="anfrage">
+            <p class="config__note" data-requires-not="form.endpoint|contact.email">Anfragen sind in Kürze möglich.</p>
+            <fieldset class="config__step" data-step="contact" id="anfrage" data-requires="form.endpoint|contact.email">
               <legend class="config__legend">Anfrage. <span>Wohin dürfen wir antworten?</span></legend>
               <div class="field">
                 <label for="f-name">Name</label>
@@ -408,13 +411,16 @@
               <div class="summary__row"><dt>Zeitrahmen</dt><dd class="is-empty" data-sum="time">Noch offen</dd></div>
             </dl>
             <div class="summary__price" aria-live="polite">
-              <p class="summary__price-label">Richtpreis<sup class="fn"><a href="#fn-5" aria-label="Fußnote 5">5</a></sup></p>
-              <p class="t-headline-s summary__price-value" data-total><mark class="ph">[RICHTPREIS]</mark></p>
-              <p class="summary__note" data-vat-note><mark class="ph">[Hinweis netto/brutto]</mark></p>
+              <div data-requires="pricing.types">
+                <p class="summary__price-label">Richtpreis<sup class="fn"><a href="#fn-5" aria-label="Fußnote 5">5</a></sup></p>
+                <p class="t-headline-s summary__price-value" data-total>–</p>
+                <p class="summary__note" data-requires="pricing.vatNote"><span data-config="pricing.vatNote"><mark class="ph">[Hinweis netto/brutto]</mark></span></p>
+              </div>
+              <p class="summary__price-fallback" data-requires-not="pricing.types">Deinen Richtpreis bekommst du <span data-requires="contact.responseTime">innerhalb von <span data-config="contact.responseTime"><mark class="ph">[ANTWORTZEIT]</mark></span></span><span data-requires-not="contact.responseTime">schnell</span> per E-Mail.</p>
             </div>
-            <button class="btn btn--block" type="submit" form="config-form" data-track="cta-anfrage">Projekt anfragen</button>
+            <button class="btn btn--block" type="submit" form="config-form" data-track="cta-anfrage" data-requires="form.endpoint|contact.email">Projekt anfragen</button>
             <p class="summary__status" role="status" data-form-status></p>
-            <noscript><p class="summary__note">Ohne JavaScript erreichst du uns direkt per E-Mail: <mark class="ph">[E-MAIL]</mark></p></noscript>
+            <noscript><p class="summary__note">Der Konfigurator braucht JavaScript. Unsere Kontaktangaben stehen im <a href="impressum.html">Impressum</a>.</p></noscript>
           </aside>
         </div>
 
@@ -426,7 +432,7 @@
           </details>
           <details>
             <summary>Was passiert nach der Anfrage?<svg viewBox="0 0 14 14" aria-hidden="true"><use href="#i-plus"/></svg></summary>
-            <p>Wir lesen deine Auswahl, melden uns bei dir und klären offene Fragen. <mark class="ph">[Antwortzeit, z.&nbsp;B. „innerhalb von zwei Werktagen“]</mark></p>
+            <p>Wir lesen deine Auswahl, melden uns bei dir und klären offene Fragen. <span data-requires="contact.responseTime">Du hörst innerhalb von <span data-config="contact.responseTime"><mark class="ph">[ANTWORTZEIT]</mark></span> von uns.</span></p>
           </details>
           <details>
             <summary>Ich weiß noch nicht genau, was ich brauche.<svg viewBox="0 0 14 14" aria-hidden="true"><use href="#i-plus"/></svg></summary>
@@ -446,7 +452,7 @@
             <ul class="index__main">
               <li><a href="#leistungen">Leistungen</a></li>
               <li><a href="#material">3D zum Anfassen</a></li>
-              <li><a href="#projekte">Projekte</a></li>
+              <li data-requires="projects"><a href="#projekte">Projekte</a></li>
               <li><a href="#ablauf">Ablauf</a></li>
             </ul>
           </div>
@@ -456,13 +462,14 @@
               <li><a href="#konfigurator">Projekt konfigurieren</a></li>
             </ul>
             <ul class="index__sub">
-              <li><a href="#anfrage">Projekt anfragen</a></li>
+              <li data-requires="form.endpoint|contact.email"><a href="#anfrage">Projekt anfragen</a></li>
             </ul>
           </div>
           <div>
             <p class="index__head">Mehr</p>
             <ul class="index__sub" style="margin-top:0">
-              <li><a href="mailto:" data-email-link><span data-config="contact.email"><mark class="ph">[E-MAIL]</mark></span></a></li>
+              <li data-requires="contact.email"><a data-email-link><span data-config="contact.email"><mark class="ph">[E-MAIL]</mark></span></a></li>
+              <li data-requires="contact.phone"><a data-tel-link><span data-config="contact.phone"><mark class="ph">[TELEFON]</mark></span></a></li>
               <li><a href="impressum.html">Impressum</a></li>
               <li><a href="datenschutz.html">Datenschutz</a></li>
             </ul>
@@ -482,7 +489,7 @@
           <li id="fn-2"><a href="#fnref-2" aria-label="Zurück zum Text, Fußnote 2">2.</a><span>Stand 11.11.2026: Die Seite setzt keine Cookies und nutzt weder localStorage noch sessionStorage.</span></li>
           <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe aller JavaScript-Dateien dieser Seite, mit gzip (Stufe 9) komprimiert. Unkomprimiert 52&nbsp;KB. Stand 12.11.2026.</span></li>
           <li id="fn-4"><a href="#fnref-4" aria-label="Zurück zum Text, Fußnote 4">4.</a><span>Geometrie-Daten des Logos, mit gzip (Stufe 9) komprimiert. Unkomprimiert 760&nbsp;KB. Stand 11.11.2026.</span></li>
-          <li id="fn-5"><a href="#fnref-5" aria-label="Zurück zum Text, Fußnote 5">5.</a><span>Der Richtpreis ist unverbindlich und ersetzt kein Angebot. Er ergibt sich aus Projektart, Ausgangslage, Umfang und Extras. <mark class="ph">[Hinweis netto/brutto]</mark></span></li>
+          <li id="fn-5"><a href="#fnref-5" aria-label="Zurück zum Text, Fußnote 5">5.</a><span>Der Richtpreis ist unverbindlich und ersetzt kein Angebot. Er ergibt sich aus Projektart, Ausgangslage, Umfang und Extras.<span data-requires="pricing.vatNote"> <span data-config="pricing.vatNote"><mark class="ph">[Hinweis netto/brutto]</mark></span></span></span></li>
         </ol>
       </section>
       <nav class="breadcrumb" aria-label="Brotkrumen">
@@ -491,7 +498,7 @@
         <span aria-current="page">Startseite</span>
       </nav>
       <div class="footer__legal">
-        <p>Copyright © 2026 Websign <span data-config="legal.owner"><mark class="ph">[INHABER/RECHTSFORM]</mark></span>. Alle Rechte vorbehalten.</p>
+        <p>Copyright © 2026 Websign<span data-requires="legal.owner"> <span data-config="legal.owner"><mark class="ph">[INHABER/RECHTSFORM]</mark></span></span>. Alle Rechte vorbehalten.</p>
         <ul>
           <li><a href="impressum.html">Impressum</a></li>
           <li><a href="datenschutz.html">Datenschutz</a></li>

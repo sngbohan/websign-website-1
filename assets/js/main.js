@@ -1,6 +1,6 @@
-// Websign · Seitenlogik: Platzhalter, Reveal, Navigation, Modals, Galerien, Szenen-Text.
-// 3D und Konfigurator werden nachgeladen, damit der erste Aufbau schlank bleibt.
-import { config } from './config.js';
+// Websign · Seitenlogik: Inhalte aus config.js, Reveal, Navigation, Modals, Galerien, Szenen-Text.
+// 3D, Glas, Konfigurator und die Bausteine motion/count/media werden nachgeladen, damit der erste Aufbau schlank bleibt.
+import { config, REQUIRED_LEGAL } from './config.js';
 
 window.__wsReady = true;
 
@@ -8,27 +8,63 @@ const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-const get = (path) => path.split('.').reduce((o, k) => (o == null ? o : o[k]), config);
+
+// Entwicklungsmodus: nur lokal und nur mit ?dev. Dann bleiben alle offenen Stellen als orange Platzhalter sichtbar.
+const local = /^(localhost|127\.0\.0\.1|\[::1\])?$|\.(localhost|test)$/.test(location.hostname);
+const dev = local && new URLSearchParams(location.search).has('dev');
+document.documentElement.classList.toggle('dev', dev);
+
+// Ein Wert gilt als vorhanden, wenn er nicht leer ist. Listen brauchen einen Eintrag, Gruppen mindestens einen gefüllten Wert.
+const present = (v) => v != null && v !== '' && (Array.isArray(v) ? v.length > 0 : typeof v === 'object' ? Object.values(v).some(present) : true);
+const get = (path) => {
+  path = path.replace(/^config\./, '');
+  if (path === 'legal.complete') return REQUIRED_LEGAL.every((p) => present(get(p)));
+  return path.split('.').reduce((o, k) => (o == null ? o : o[k]), config);
+};
+// Mehrere Pfade (Leerzeichen) müssen alle erfüllt sein; „a|b“ heißt: einer von beiden reicht.
+const has = (paths) => paths.trim().split(/[\s,]+/).every((p) => p.split('|').some((q) => present(get(q))));
 
 // Messpunkt für spätere, einwilligungsbasierte Analyse: Es wird nichts gesendet, nur ein Ereignis ausgelöst.
 export function track(name, detail = {}) {
   document.dispatchEvent(new CustomEvent('ws:track', { detail: { name, ...detail } }));
 }
 
-// ---------- Platzhalter aus config.js füllen ----------
+// ---------- data-requires: Was keine Daten hat, bleibt unsichtbar ----------
+// data-requires="contact.email"       sichtbar, sobald alle genannten Werte in config.js stehen (CSS versteckt es bis dahin)
+// data-requires="form.endpoint|contact.email"   sichtbar, sobald einer der beiden Werte steht
+// data-requires-not="pricing.types"   Ausweichtext: sichtbar, solange einer der Werte fehlt
+function applyRequires() {
+  $$('[data-requires]').forEach((el) => {
+    if (dev || has(el.dataset.requires)) el.setAttribute('data-ok', '');
+    else el.hidden = true;
+  });
+  $$('[data-requires-not]').forEach((el) => { if (!dev && has(el.dataset.requiresNot)) el.hidden = true; });
+}
+
+// ---------- Inhalte aus config.js einsetzen ----------
 function fillConfig() {
-  $$('[data-config]').forEach((el) => {
-    const v = get(el.dataset.config);
-    if (v != null && v !== '') el.textContent = v;
+  $$('[data-config], [data-text]').forEach((el) => {
+    const v = get(el.dataset.config || el.dataset.text);
+    if (present(v) && typeof v !== 'object') el.textContent = v;
   });
-  $$('[data-text]').forEach((el) => {
-    const v = get(el.dataset.text);
-    if (v != null && v !== '') el.textContent = v;
-  });
-  $$('[data-email-link]').forEach((a) => {
-    if (config.contact.email) a.href = `mailto:${config.contact.email}`;
-    else a.removeAttribute('href');
-  });
+  const c = config.contact;
+  $$('[data-email-link]').forEach((a) => { if (c.email) a.href = `mailto:${c.email}`; else a.removeAttribute('href'); });
+  $$('[data-tel-link]').forEach((a) => { if (c.phone) a.href = `tel:${c.phone.replace(/[^+\d]/g, '')}`; else a.removeAttribute('href'); });
+  $$('[data-href]').forEach((a) => { const v = get(a.dataset.href); if (present(v)) a.href = v; else a.removeAttribute('href'); });
+
+  // Strukturierte Daten: Kontakt nur ergänzen, wenn er in config.js steht
+  const ld = $('script[data-ld]');
+  if (ld) {
+    try {
+      const d = JSON.parse(ld.textContent);
+      if (c.email) d.email = c.email;
+      if (c.phone) d.telephone = c.phone;
+      const m = /^(\d{5})\s+(.+)$/.exec(config.legal.city || '');
+      if (config.legal.street && m) d.address = { '@type': 'PostalAddress', streetAddress: config.legal.street, postalCode: m[1], addressLocality: m[2], addressCountry: 'DE' };
+      ld.textContent = JSON.stringify(d);
+    } catch (err) { /* unverändert lassen */ }
+  }
+
   const list = $('[data-projects]');
   if (list && config.projects.length) {
     list.textContent = '';
@@ -37,9 +73,10 @@ function fillConfig() {
       li.className = 'project';
       const media = document.createElement(p.url ? 'a' : 'div');
       media.className = 'project__media';
-      if (p.url) { media.href = p.url; media.rel = 'noopener'; }
+      if (p.url) media.href = p.url;
       const img = document.createElement('img');
-      img.src = p.image; img.alt = p.alt || ''; img.loading = 'lazy'; img.decoding = 'async';
+      img.src = p.image; img.alt = p.alt || ''; img.width = p.width || 1120; img.height = p.height || 700;
+      img.loading = 'lazy'; img.decoding = 'async';
       media.append(img);
       const h = document.createElement('h3'); h.className = 't-card'; h.textContent = p.name;
       const m = document.createElement('p'); m.textContent = p.meta || '';
@@ -199,6 +236,7 @@ function initScene() {
 }
 
 // ---------- Start ----------
+applyRequires();
 fillConfig();
 initReveal();
 initNav();
@@ -212,4 +250,7 @@ idle(() => {
   if ($('.lg')) import('./liquid-glass.js').then((m) => m.initLiquidGlass()).catch((err) => console.error('[Websign Glas]', err));
   if ($('[data-stage]')) import('./scene.js').then((m) => m.initScenes()).catch((err) => { document.documentElement.classList.add('no-webgl'); console.error('[Websign 3D]', err); });
   if ($('[data-config-form]')) import('./configurator.js').then((m) => m.initConfigurator(config, track)).catch((err) => console.error('[Websign Konfigurator]', err));
+  if ($('[data-kf], [data-kf-preset]')) import('./motion.js').then((m) => m.initMotion()).catch((err) => console.error('[Websign Motion]', err));
+  if ($('[data-count-to]')) import('./count.js').then((m) => m.initCount()).catch((err) => console.error('[Websign Zähler]', err));
+  if ($('video[data-video]')) import('./media.js').then((m) => m.initMedia()).catch((err) => console.error('[Websign Video]', err));
 });

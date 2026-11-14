@@ -39,8 +39,12 @@ strong, b { font-weight: var(--weight-bold); }
 }
 .skip-link:focus { transform: none; }
 
-/* Klar markierte Platzhalter für Angaben, die noch fehlen */
-.ph { background: none; color: var(--badge-new); font-weight: inherit; }
+/* Was auf Angaben aus config.js wartet, bleibt unsichtbar, bis main.js es freigibt (data-ok).
+   Ohne JavaScript und bei fehlenden Angaben bleibt es verborgen: Live ist nie ein Platzhalter zu sehen. */
+[data-requires]:not([data-ok]) { display: none !important; }
+/* Platzhalter für fehlende Angaben: nur im lokalen Entwicklungsmodus (?dev) sichtbar */
+.ph { display: none; }
+.dev .ph { display: inline; background: none; color: var(--badge-new); font-weight: inherit; }
 
 /* ---------- Typo-Rollen ---------- */
 .t-statement { font-size: var(--statement-size); line-height: var(--statement-line); letter-spacing: var(--statement-track); font-weight: var(--weight-bold); }
