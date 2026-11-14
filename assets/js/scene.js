@@ -350,19 +350,20 @@ export async function initScenes() {
 
   const controllers = {
     hero(now) {
+      // Das Logo steht frontal im Gerät, genau über seiner Kontur. Es wölbt sich auf, während der Deckel sich öffnet,
+      // und folgt dem Zeiger nur wenige Grad: genug, damit das Chrom lebt, wenig genug, damit die Kontur passt.
       const t = baseState();
       const p = heroEl ? clamp(window.scrollY / Math.max(heroEl.offsetHeight, 1), 0, 1) : 0;
       let e = 1;
       if (!intro.done) {
         if (!intro.start) intro.start = now;
-        const x = clamp((now - intro.start) / 1900, 0, 1);
+        const x = clamp((now - intro.start) / 1600, 0, 1);
         e = 1 - Math.pow(1 - x, 3);
         if (x >= 1) intro.done = true;
       }
-      t.yaw = -0.5 - 0.55 * p + (1 - e) * 1.3 + pointer.x * 0.16;
-      t.pitch = 0.2 - 0.3 * p + (1 - e) * 0.25 - pointer.y * 0.1;
-      t.roll = -0.03;
-      t.scale = (0.9 + 0.1 * e) * (1 - 0.1 * p);
+      t.yaw = pointer.x * 0.09 + (1 - e) * 0.35 - 0.06 * p;
+      t.pitch = 0.05 - pointer.y * 0.06 + 0.1 * p;
+      t.inflate = (0.2 + 0.8 * e) * (1 - 0.35 * p);
       t.opacity = e;
       return t;
     },

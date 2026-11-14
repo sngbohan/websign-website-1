@@ -50,6 +50,11 @@ function fillConfig() {
   const c = config.contact;
   $$('[data-email-link]').forEach((a) => { if (c.email) a.href = `mailto:${c.email}`; else a.removeAttribute('href'); });
   $$('[data-tel-link]').forEach((a) => { if (c.phone) a.href = `tel:${c.phone.replace(/[^+\d]/g, '')}`; else a.removeAttribute('href'); });
+  // „ab …“: kleinster gesetzter Preis einer Gruppe, z. B. data-money-min="pricing.types"
+  $$('[data-money-min]').forEach((el) => {
+    const vals = Object.values(get(el.dataset.moneyMin) || {}).filter((v) => typeof v === 'number');
+    if (vals.length) el.textContent = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Math.min(...vals));
+  });
   $$('[data-href]').forEach((a) => { const v = get(a.dataset.href); if (present(v)) a.href = v; else a.removeAttribute('href'); });
 
   // Strukturierte Daten: Kontakt nur ergänzen, wenn er in config.js steht

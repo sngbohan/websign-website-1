@@ -96,6 +96,10 @@
   --on-dark-line: rgba(238, 242, 248, 0.24);
   --ink: #05070c;
   --glow-brand: radial-gradient(closest-side, rgba(71, 102, 160, 0.34), rgba(40, 65, 114, 0.12) 55%, transparent);
+  /* Gerät im Hero (neutraler Rechner im Profil): Gehäuse oben/unten und die Farbe seines Lichts */
+  --device-hi: #5b6884;
+  --device-lo: #1b2334;
+  --device-light: rgba(127, 155, 208, 0.6);
 
   /* Materialien */
   --glass: rgba(248, 249, 252, 0.8);
