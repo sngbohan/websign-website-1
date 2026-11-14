@@ -331,7 +331,7 @@ export async function initScenes() {
   gl.uniform3f(U.uBox, (BOX.x0 + BOX.x1) / 2, (BOX.y0 + BOX.y1) / 2, (BOX.x1 - BOX.x0) / 2);
   gl.uniform1f(U.uPuff, PUFF);
   gl.uniform3f(U.uCam, 0, 0, CAM_D);
-  gl.uniform3f(U.uFlatColor, 0.961, 0.961, 0.969);
+  gl.uniform3f(U.uFlatColor, 0.933, 0.949, 0.973);   // --on-dark
 
   // ----- Zustand -----
   const dprCap = small || !finePointer ? 1.5 : 2;
