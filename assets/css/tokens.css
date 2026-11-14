@@ -84,6 +84,10 @@
   --grad-accent-text: linear-gradient(100deg, #0f8a6a, #0a6e54);
   --brand-text: #2e4a7e;      /* einfarbiger Ersatz für Verlaufstext */
   --accent-text: #0b7a5c;
+  /* Lichttext (.flow): Verlauf im Fließtext. Jede Stufe erreicht als normaler Text mindestens 4,5:1 auf allen Flächen des Themes. */
+  --lit-1: #0d1320;
+  --lit-2: #284172;
+  --lit-3: #4766a0;
 
   /* Feste Farben für Bauteile, die immer dunkel sind (Viewer, Steuer-Pillen, Glas-Buttons) */
   --on-dark: #eef2f8;
@@ -148,6 +152,9 @@
   --grad-accent-text: var(--grad-accent);
   --brand-text: #9eb1d2;
   --accent-text: #7ce0c3;
+  --lit-1: #eef2f8;
+  --lit-2: #c6d2e5;
+  --lit-3: #7f9bd0;
   --glass: rgba(13, 17, 25, 0.78);
   --curtain: rgba(5, 7, 12, 0.55);
 }

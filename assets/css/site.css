@@ -75,6 +75,49 @@ strong, b { font-weight: var(--weight-bold); }
   .t-grad-accent { background-image: var(--grad-accent-text); }
 }
 
+/* ---------- Lichttext: bewegter Verlauf im Fließtext ----------
+   Für Intro-Absätze (.t-intro) und ihre Headline. Drei Bewegungen greifen ineinander, alle an Scroll oder Einblenden
+   gekoppelt, nichts läuft von selbst weiter:
+   1 Lesefortschritt · der Absatz füllt sich in Leserichtung mit dem Verlauf (--p aus motion.js, 0 → 1)
+   2 Lichtlauf       · ein heller Streifen wandert schräg durch den noch grauen Text, wie das Licht über das Chrom-Logo
+   3 Schimmer        · beim Einblenden läuft einmal ein Lichtschimmer durch Headline und Absatz
+   Markup: <h2 class="t-… t-grad flow-head" data-kf='{"start":"a0t - 100vh","end":"a0b"}'>
+           <p class="t-intro flow" data-kf='{"start":"a0t - 82vh","end":"a0b - 42vh"}'><span class="flow__text">Text mit <strong>Kernsatz</strong></span></p>
+   Kernsätze (strong) bleiben immer voll lesbar. Ohne JavaScript steht der Text fertig im Verlauf; fällt motion.js aus,
+   bleibt er im ruhigen Grau. Farben: --lit-1 bis --lit-3 und --text-secondary, alle mindestens 4,5:1. */
+.flow { --p: 1; }
+.js .flow, .js .flow-head { --p: 0; }
+.no-motion .flow { --p: 1; }
+.no-motion .flow-head { --p: 0.5; }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .flow, .flow__text { -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+  .flow strong { -webkit-text-fill-color: var(--text-primary); }
+  /* Absatz als Ganzes, zwei Ebenen: oben der Schimmer, darunter der Lichtlauf auf grauem Grund */
+  .flow {
+    background-image:
+      linear-gradient(105deg, transparent 42%, var(--lit-1) 50%, transparent 58%),
+      linear-gradient(105deg, var(--text-secondary) 0%, var(--text-secondary) 36%, var(--lit-3) 44%, var(--lit-1) 50%, var(--lit-3) 56%, var(--text-secondary) 64%, var(--text-secondary) 100%);
+    background-repeat: no-repeat; background-size: 260% 100%, 320% 100%;
+    background-position: 180% 0, calc(100% - var(--p) * 100%) 0;
+  }
+  /* Der Text selbst, über alle Zeilen hinweg als ein Band: füllt sich in Leserichtung */
+  .flow__text {
+    -webkit-box-decoration-break: slice; box-decoration-break: slice;
+    background-image: linear-gradient(90deg, var(--lit-1) 0%, var(--lit-2) 45%, var(--lit-3) calc(100% - 3em), transparent 100%);
+    background-repeat: no-repeat; background-size: calc(var(--p) * 104%) 100%;
+  }
+  /* Headline: Der Markenverlauf ist breiter als der Text und wandert beim Scrollen durch die Zeilen */
+  .flow-head {
+    background-image: linear-gradient(105deg, transparent 44%, var(--lit-1) 50%, transparent 56%), var(--grad-brand-text);
+    background-repeat: no-repeat, repeat; background-size: 260% 100%, 240% 100%;
+    background-position: 180% 0, calc(var(--p) * 100%) 0;
+  }
+  .js .is-revealed .flow { animation: flow-sheen 2200ms var(--ease-ws) 700ms both; }
+  .js .is-revealed .flow-head { animation: flow-sheen-head 2200ms var(--ease-ws) 300ms both; }
+}
+@keyframes flow-sheen { from { background-position: 180% 0, calc(100% - var(--p) * 100%) 0; } to { background-position: -80% 0, calc(100% - var(--p) * 100%) 0; } }
+@keyframes flow-sheen-head { from { background-position: 180% 0, calc(var(--p) * 100%) 0; } to { background-position: -80% 0, calc(var(--p) * 100%) 0; } }
+
 /* Abstände in em, damit sie mit der Schrift skalieren */
 .t-eyebrow + [class*="t-"] { margin-top: 0.4em; }
 [class*="t-headline"] + p, .t-section + p, .t-statement + p, .t-hero + p, .t-card + p { margin-top: 0.8em; }
@@ -587,7 +630,7 @@ p + p { margin-top: 0.8em; }
   .btn, .fcard, .option__box, .summary, .step-card, .audience__card, .stat-panel, .viewer, .price-pill, .scene__tabs, .viewer__controls { border: 1px solid ButtonText; }
   .option input:checked + .option__box { outline: 3px solid Highlight; }
   .stage__mark { fill: CanvasText; }
-  .t-grad, .t-grad-accent { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
+  .t-grad, .t-grad-accent, .flow, .flow__text, .flow-head, .flow strong { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
   .depth-grid { display: none; }
 }
 @media print {
@@ -596,4 +639,5 @@ p + p { margin-top: 0.8em; }
   .js .scene__sticky { position: static; height: auto; }
   .js .beat { opacity: 1; visibility: visible; transform: none; }
   .js [data-reveal] [data-reveal-item] { opacity: 1; transform: none; }
+  .t-grad, .t-grad-accent, .flow, .flow__text, .flow-head, .flow strong { background: none !important; animation: none !important; color: CanvasText; -webkit-text-fill-color: CanvasText; }
 }
