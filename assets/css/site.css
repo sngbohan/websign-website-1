@@ -75,49 +75,6 @@ strong, b { font-weight: var(--weight-bold); }
   .t-grad-accent { background-image: var(--grad-accent-text); }
 }
 
-/* ---------- Lichttext: bewegter Verlauf im Fließtext ----------
-   Für Intro-Absätze (.t-intro) und ihre Headline. Drei Bewegungen greifen ineinander, alle an Scroll oder Einblenden
-   gekoppelt, nichts läuft von selbst weiter:
-   1 Lesefortschritt · der Absatz füllt sich in Leserichtung mit dem Verlauf (--p aus motion.js, 0 → 1)
-   2 Lichtlauf       · ein heller Streifen wandert schräg durch den noch grauen Text, wie das Licht über das Chrom-Logo
-   3 Schimmer        · beim Einblenden läuft einmal ein Lichtschimmer durch Headline und Absatz
-   Markup: <h2 class="t-… t-grad flow-head" data-kf='{"start":"a0t - 100vh","end":"a0b"}'>
-           <p class="t-intro flow" data-kf='{"start":"a0t - 82vh","end":"a0b - 42vh"}'><span class="flow__text">Text mit <strong>Kernsatz</strong></span></p>
-   Kernsätze (strong) bleiben immer voll lesbar. Ohne JavaScript steht der Text fertig im Verlauf; fällt motion.js aus,
-   bleibt er im ruhigen Grau. Farben: --lit-1 bis --lit-3 und --text-secondary, alle mindestens 4,5:1. */
-.flow { --p: 1; }
-.js .flow, .js .flow-head { --p: 0; }
-.no-motion .flow { --p: 1; }
-.no-motion .flow-head { --p: 0.5; }
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .flow, .flow__text { -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
-  .flow strong { -webkit-text-fill-color: var(--text-primary); }
-  /* Absatz als Ganzes, zwei Ebenen: oben der Schimmer, darunter der Lichtlauf auf grauem Grund */
-  .flow {
-    background-image:
-      linear-gradient(105deg, transparent 42%, var(--lit-1) 50%, transparent 58%),
-      linear-gradient(105deg, var(--text-secondary) 0%, var(--text-secondary) 36%, var(--lit-3) 44%, var(--lit-1) 50%, var(--lit-3) 56%, var(--text-secondary) 64%, var(--text-secondary) 100%);
-    background-repeat: no-repeat; background-size: 260% 100%, 320% 100%;
-    background-position: 180% 0, calc(100% - var(--p) * 100%) 0;
-  }
-  /* Der Text selbst, über alle Zeilen hinweg als ein Band: füllt sich in Leserichtung */
-  .flow__text {
-    -webkit-box-decoration-break: slice; box-decoration-break: slice;
-    background-image: linear-gradient(90deg, var(--lit-1) 0%, var(--lit-2) 45%, var(--lit-3) calc(100% - 3em), transparent 100%);
-    background-repeat: no-repeat; background-size: calc(var(--p) * 104%) 100%;
-  }
-  /* Headline: Der Markenverlauf ist breiter als der Text und wandert beim Scrollen durch die Zeilen */
-  .flow-head {
-    background-image: linear-gradient(105deg, transparent 44%, var(--lit-1) 50%, transparent 56%), var(--grad-brand-text);
-    background-repeat: no-repeat, repeat; background-size: 260% 100%, 240% 100%;
-    background-position: 180% 0, calc(var(--p) * 100%) 0;
-  }
-  .js .is-revealed .flow { animation: flow-sheen 2200ms var(--ease-ws) 700ms both; }
-  .js .is-revealed .flow-head { animation: flow-sheen-head 2200ms var(--ease-ws) 300ms both; }
-}
-@keyframes flow-sheen { from { background-position: 180% 0, calc(100% - var(--p) * 100%) 0; } to { background-position: -80% 0, calc(100% - var(--p) * 100%) 0; } }
-@keyframes flow-sheen-head { from { background-position: 180% 0, calc(var(--p) * 100%) 0; } to { background-position: -80% 0, calc(var(--p) * 100%) 0; } }
-
 /* Abstände in em, damit sie mit der Schrift skalieren */
 .t-eyebrow + [class*="t-"] { margin-top: 0.4em; }
 [class*="t-headline"] + p, .t-section + p, .t-statement + p, .t-hero + p, .t-card + p { margin-top: 0.8em; }
@@ -167,18 +124,14 @@ p + p { margin-top: 0.8em; }
   position: fixed; inset: 0 0 auto 0; z-index: 100; height: var(--nav-height);
   background: var(--glass); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter);
   color: var(--text-primary);
-  box-shadow: inset 0 -1px 0 var(--glass-edge);
-  transition: background-color var(--dur-ui) var(--ease-ws-ui), color var(--dur-ui) var(--ease-ws-ui), height var(--dur-ui) var(--ease-ws-ui);
+  transition: background-color var(--dur-ui) var(--ease-ws-ui), color var(--dur-ui) var(--ease-ws-ui);
 }
-/* Beim Scrollen wird die Leiste kompakter */
-.nav.is-compact { height: 40px; }
-.nav.is-compact .nav__logo svg { transform: scale(0.88); }
 .nav__inner { height: 100%; width: min(1024px, 100% - 32px); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.nav__logo { display: inline-flex; align-items: center; height: 100%; padding-inline: 8px; margin-left: -8px; color: var(--text-primary); }
-.nav__logo svg { width: 40px; height: auto; fill: currentColor; transition: transform var(--dur-ui) var(--ease-ws-ui); }
+.nav__logo { display: inline-flex; align-items: center; height: var(--nav-height); padding-inline: 8px; margin-left: -8px; color: var(--text-primary); }
+.nav__logo svg { width: 40px; height: auto; fill: currentColor; }
 .nav__links { display: flex; align-items: center; gap: 4px; }
 .nav__links a {
-  display: inline-flex; align-items: center; height: 100%; padding-inline: 14px;
+  display: inline-flex; align-items: center; height: var(--nav-height); padding-inline: 14px;
   font-size: var(--caption-size); letter-spacing: var(--caption-track); color: var(--text-primary); opacity: 0.8;
   transition: opacity var(--dur-micro) var(--ease-ws-ui);
 }
@@ -214,131 +167,26 @@ p + p { margin-top: 0.8em; }
 .stage.is-live canvas { opacity: 1; }
 .stage.is-live .stage__mark { opacity: 0; }
 
-/* ---------- Hero ----------
-   Z-Muster: oben die Bühne mit dem Gerät, unten links die Botschaft in drei Stufen (Absender, Versprechen, Fakt),
-   unten rechts die Handlung. Der gefüllte Button ist das einzige satt gefärbte Element. */
+/* ---------- Hero ---------- */
 .hero {
-  --u: clamp(0.7px, min(70vw / 380, (100vh - 400px) / 285), 3.2px);
-  --u: clamp(0.7px, min(70vw / 380, (100svh - 400px) / 285), 3.2px);
-  position: relative; display: flex; flex-direction: column; overflow: hidden;
-  min-height: max(100vh, 640px); min-height: max(100svh, 640px);
-  padding: calc(var(--nav-height) + 24px) 0 40px; background: var(--surface); color: var(--text-primary);
+  position: relative; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;
+  min-height: max(100vh, 600px); min-height: max(100svh, 600px);
+  padding: calc(var(--nav-height) + 24px) 0 56px; background: var(--surface); color: var(--text-primary);
 }
-.hero__stage { position: relative; flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 0; padding-block: 16px 32px; }
-/* Lichtschein am Boden: verbindet Bühne und Text */
+.hero .stage__mark { position: absolute; left: 50%; top: 33%; width: min(52%, 780px, 60vh); height: auto; transform: translate(-50%, -50%); }
+/* Lichtschein unter dem Logo: gibt dem Glas-Button etwas zu brechen */
 .hero::after { content: ""; position: absolute; left: 50%; bottom: -8%; width: min(1100px, 92%); height: 62%; transform: translateX(-50%); pointer-events: none;
   background: var(--glow-brand); }
-/* Raster: Absender und Versprechen laufen über die ganze Breite, darunter links der Fakt, rechts die Handlung */
-.hero__content { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 0 var(--grid-gap); }
-.hero__text { display: contents; }
-.hero__text > * { grid-column: 1; }
-.hero__eyebrow, .hero__text .t-hero { grid-column: 1 / -1; }
-.hero__text .t-hero { white-space: nowrap; }
-.price-pill { grid-column: 2; grid-row: 3 / span 2; align-self: end; }
-.hero__eyebrow { font-size: var(--intro-size); line-height: var(--intro-line); letter-spacing: var(--intro-track); font-weight: var(--weight-medium); color: var(--text-primary); }
-.hero__eyebrow + .t-hero { margin-top: 0.08em; }
-.hero__text .t-subhead { margin-top: 0.7em; max-width: 760px; color: var(--text-primary); }
-.hero__text .link { margin-top: 6px; }
+.hero__content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0; }
+.hero__text { max-width: 860px; }
+.hero__text .t-subhead { color: var(--text-secondary); max-width: 560px; margin-inline: auto; }
+.hero__cta { margin-top: 32px; }
+.hero__meta { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 24px; color: var(--text-secondary); font-size: var(--body-s-size); line-height: var(--body-s-line); letter-spacing: var(--body-s-track); }
+.hero__meta .link { font-size: var(--body-size); }
 .price-pill {
-  display: flex; align-items: center; gap: 20px; flex-shrink: 0; min-height: 68px; padding: 10px 10px 10px 24px; border-radius: var(--r-card);
+  display: flex; align-items: center; gap: 16px; flex-shrink: 0; min-height: 56px; padding: 0 10px 0 22px; border-radius: var(--r-card);
   background: var(--control-pill); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter);
-  color: var(--on-dark); text-align: left;
-}
-/* Als Liquid Glass (liquid-glass.css) trägt das Glas die Fläche, nicht die deckende Pille */
-.price-pill.lg { background: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
-.scene__tabs, .viewer__controls { box-shadow: var(--glass-shadow); }
-.price-pill__text { display: grid; gap: 1px; }
-.price-pill__main { font-size: var(--body-size); line-height: 1.3; font-weight: var(--weight-medium); }
-.price-pill__sub { color: var(--on-dark-muted); font-size: var(--body-s-size); line-height: var(--body-s-line); letter-spacing: var(--body-s-track); }
-
-/* ---------- Rechner als 3D-Modell (reines CSS, kein Bild) ----------
-   Neutraler, selbst gebauter Rechner ohne Markenbezug. Maße in Einheiten: 1 Einheit = --u (aus .hero).
-   Breite 312, Tiefe 221, Unterteil 11,5 hoch, Deckel 4. Achsen: x rechts, y unten, z zum Betrachter.
-   Ursprung (.lp) ist der Punkt am Boden unter der Gerätemitte; das Scharnier liegt hinten oben am Unterteil.
-   Gesteuert wird alles über sechs Werte, die assets/js/hero.js setzt. Ohne JavaScript gilt der Endzustand:
-     --lid     Öffnungswinkel des Deckels in Grad (0 zu, 110 offen)
-     --yaw     Kamera seitlich in Grad (90 = exaktes Seitenprofil, 25 = Dreiviertelansicht)
-     --pitch   Kamera von oben in Grad
-     --persp   Kameraabstand (20000px wirkt wie ein Profil ohne Fluchtpunkt)
-     --bright  Helligkeit des Displays und seines Lichts auf der Tastatur (0 … 1)
-     --slice   Deckkraft der Profil-Szene: das Logo im Keil unter dem Deckel (0 … 1) */
-.lp-scene { position: relative; flex-shrink: 0; width: min(100%, calc(var(--u) * 420)); height: calc(var(--u) * 285); }
-.lp {
-  --lid: 110; --yaw: 25; --pitch: 16; --persp: 1900px; --bright: 1; --slice: 0;
-  position: absolute; left: 50%; top: calc(100% - calc(var(--u) * 38)); width: 0; height: 0;
-  transform-style: preserve-3d; will-change: transform;
-  transform: perspective(var(--persp)) rotateX(calc(var(--pitch) * -1deg)) rotateY(calc(var(--yaw) * 1deg));
-}
-/* Startzustand für das Aufklappen: geschlossen im Seitenprofil. Die Klasse setzt das Skript im <head>. */
-.js.hero-intro .lp { --lid: 0; --yaw: 90; --pitch: 0; --persp: 20000px; --bright: 0; --slice: 1; }
-.lp-base, .lp-lid { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
-.lp-base { --y: -11.5; --h: 11.5; }
-.lp-lid { --y: -4; --h: 4; transform: translate3d(0, calc(var(--u) * -11.5), calc(var(--u) * -110.5)) rotateX(calc(var(--lid) * 1deg)); }
-.lp-w, .lp-deck, .lp-back, .lp-front, .lp-floor, .lp-shadow, .lp-slice, .lp-hinge { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
-/* Wände: je Ring vier gerade Flächen und zwölf schmale für die runden Ecken. --l ist das eingebackene Licht. */
-.lp-w {
-  width: calc(var(--u) * var(--w)); height: calc(var(--u) * var(--h)); backface-visibility: hidden;
-  transform: translate3d(calc(var(--u) * var(--x)), calc(var(--u) * var(--y)), calc(var(--u) * var(--z))) rotateY(calc(var(--b) * 1deg));
-  background: linear-gradient(to bottom, var(--alu-1), var(--alu-2) 30%, var(--alu-3)); filter: brightness(var(--l));
-}
-/* Oberseite des Unterteils */
-.lp-deck {
-  width: calc(var(--u) * 312); height: calc(var(--u) * 221); border-radius: calc(var(--u) * 10); overflow: hidden;
-  transform: translate3d(calc(var(--u) * -156), calc(var(--u) * -11.5), calc(var(--u) * -110.5)) rotateX(90deg);
-  background: linear-gradient(to bottom, var(--alu-2), var(--alu-1) 55%, var(--alu-2));
-}
-.lp-keys {
-  position: absolute; left: calc(var(--u) * 20); top: calc(var(--u) * 15); width: calc(var(--u) * 272); height: calc(var(--u) * 103); padding: calc(var(--u) * 2.2); border-radius: calc(var(--u) * 4);
-  display: grid; grid-template-columns: repeat(30, 1fr); grid-template-rows: 0.62fr repeat(5, 1fr); gap: calc(var(--u) * 1.3);
-  background: var(--ink); box-shadow: inset 0 1px 2px var(--shadow-contact);
-}
-.lp-keys i { grid-column: span 2; border-radius: calc(var(--u) * 1.4); background: linear-gradient(to bottom, var(--key-1), var(--key-2)); box-shadow: inset 0 0.5px 0 var(--on-dark-line); }
-.lp-keys i:nth-child(1), .lp-keys i:nth-child(14), .lp-keys i:nth-child(29), .lp-keys i:nth-child(42), .lp-keys i:nth-child(71), .lp-keys i:nth-child(73), .lp-keys i:nth-child(76) { grid-column: span 3; }
-.lp-keys i:nth-child(28), .lp-keys i:nth-child(43), .lp-keys i:nth-child(55) { grid-column: span 4; }
-.lp-keys i:nth-child(56), .lp-keys i:nth-child(67) { grid-column: span 5; }
-.lp-keys i:nth-child(72) { grid-column: span 11; }
-.lp-pad { position: absolute; left: calc(var(--u) * 90.5); top: calc(var(--u) * 127); width: calc(var(--u) * 131); height: calc(var(--u) * 82); border-radius: calc(var(--u) * 5); background: linear-gradient(to bottom, var(--alu-1), var(--alu-2)); box-shadow: inset 0 0 calc(var(--u) * 1.6) var(--alu-edge); }
-.lp-notch { position: absolute; left: calc(var(--u) * 134); bottom: 0; width: calc(var(--u) * 44); height: calc(var(--u) * 2.4); border-radius: calc(var(--u) * 3) calc(var(--u) * 3) 0 0; background: var(--alu-edge); }
-/* Licht des Displays auf der Tastatur: wächst mit dem Öffnungswinkel */
-.lp-spill { position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 0%, var(--device-light), transparent 72%); opacity: var(--bright); }
-.lp-hinge { width: calc(var(--u) * 236); height: calc(var(--u) * 5.5); border-radius: calc(var(--u) * 3); transform: translate3d(calc(var(--u) * -118), calc(var(--u) * -15), calc(var(--u) * -109.6)); background: linear-gradient(to bottom, var(--key-1), var(--ink)); }
-/* Deckel: außen Aluminium, innen Rahmen und Display */
-.lp-back {
-  width: calc(var(--u) * 312); height: calc(var(--u) * 221); border-radius: calc(var(--u) * 10); backface-visibility: hidden;
-  transform: translate3d(calc(var(--u) * -156), calc(var(--u) * -4), 0) rotateX(90deg);
-  background: linear-gradient(105deg, var(--alu-2), var(--alu-1) 38%, var(--alu-2) 62%, var(--alu-3));
-}
-.lp-front {
-  width: calc(var(--u) * 312); height: calc(var(--u) * 221); border-radius: calc(var(--u) * 10); backface-visibility: hidden;
-  transform: translate3d(calc(var(--u) * -156), 0, calc(var(--u) * 221)) rotateX(-90deg); background: var(--ink);
-}
-.lp-cam { position: absolute; left: 50%; top: calc(var(--u) * 1.5); width: calc(var(--u) * 1.6); height: calc(var(--u) * 1.6); margin-left: calc(var(--u) * -0.8); border-radius: 50%; background: var(--key-1); }
-.lp-display { position: absolute; left: calc(var(--u) * 4); right: calc(var(--u) * 4); top: calc(var(--u) * 4.6); bottom: calc(var(--u) * 9); border-radius: calc(var(--u) * 3); overflow: hidden; background: var(--grad-screen); opacity: calc(0.06 + 0.94 * var(--bright)); }
-.lp-display .depth-grid { --horizon: 64%; --cell: calc(var(--u) * 24); --tilt: 66; --depth-o: 0.75; }
-.lp-stage .stage__mark { position: absolute; left: 19%; top: 44%; width: 62%; height: auto; transform: translateY(-50%); fill: url(#ws-fill); }
-.lp-sheen { position: absolute; inset: 0; pointer-events: none; background: var(--sheen); }
-/* Boden: das Tiefenraster als echte Fläche unter dem Gerät, dazu ein weicher Kontaktschatten */
-.lp-floor {
-  width: calc(var(--u) * 832); height: calc(var(--u) * 832); transform: translate3d(calc(var(--u) * -416), calc(var(--u) * 0.6), calc(var(--u) * -416)) rotateX(90deg); opacity: 0.5;
-  background-image: linear-gradient(to right, var(--line) calc(var(--u) * 0.9), transparent calc(var(--u) * 0.9)), linear-gradient(to bottom, var(--line) calc(var(--u) * 0.9), transparent calc(var(--u) * 0.9));
-  background-size: calc(var(--u) * 52) calc(var(--u) * 52);
-  -webkit-mask-image: radial-gradient(closest-side, #000 25%, transparent 92%); mask-image: radial-gradient(closest-side, #000 25%, transparent 92%);
-}
-.lp-shadow { width: calc(var(--u) * 380); height: calc(var(--u) * 290); transform: translate3d(calc(var(--u) * -190), calc(var(--u) * 0.4), calc(var(--u) * -145)) rotateX(90deg); background: radial-gradient(closest-side, var(--shadow-contact) 55%, transparent); }
-/* Profil-Szene: eine Fläche mitten durch das Gerät. Im Keil zwischen Tastatur und Deckel leuchtet das Logo. */
-.lp-slice { width: calc(var(--u) * 221); height: calc(var(--u) * 221); transform: translate3d(0, calc(var(--u) * -232.5), calc(var(--u) * -110.5)) rotateY(-90deg); opacity: var(--slice); pointer-events: none; }
-.lp-ghost, .lp-lit svg { position: absolute; left: 9%; bottom: 0; width: 84%; height: auto; }
-.lp-ghost { fill: var(--surface-raised); fill-opacity: 0.55; stroke: url(#ws-edge); stroke-width: 3; stroke-linejoin: round; filter: drop-shadow(0 0 10px var(--device-light)); }
-.lp-lit { position: absolute; inset: 0; }
-.lp-lit svg { fill: url(#ws-fill); filter: drop-shadow(0 0 16px var(--device-light)); }
-.lp-beam {
-  position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; border-radius: 2px; opacity: var(--bright);
-  transform-origin: 0 100%; transform: rotate(calc(var(--lid) * -1deg));
-  background: linear-gradient(to right, transparent, var(--lit-3) 25%, var(--lit-1) 80%, var(--lit-2));
-  box-shadow: 0 0 14px 1px var(--device-light), 0 6px 40px 6px var(--device-light);
-}
-@supports (width: calc(1px * cos(0deg))) {
-  .lp-lit { clip-path: polygon(0% 100%, calc(cos(var(--lid) * 1deg) * 300%) calc(100% - sin(var(--lid) * 1deg) * 300%), 300% 100%); }
+  color: var(--on-dark); font-size: var(--body-s-size); line-height: var(--body-s-line); letter-spacing: var(--body-s-track);
 }
 
 /* ---------- Type-Lockup ---------- */
@@ -683,9 +531,6 @@ p + p { margin-top: 0.8em; }
 
 /* ---------- M · 735–1068 px ---------- */
 @media (max-width: 1068px) {
-  .hero { --u: clamp(0.7px, min(84vw / 380, (100vh - 500px) / 285), 3.2px); --u: clamp(0.7px, min(84vw / 380, (100svh - 500px) / 285), 3.2px); }
-  .hero__content { grid-template-columns: minmax(0, 1fr); }
-  .price-pill { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 20px; }
   .fcards, .audience { grid-template-columns: 1fr; }
   .fcard { min-height: 0; }
   .stats { grid-template-columns: repeat(2, 1fr); }
@@ -703,13 +548,11 @@ p + p { margin-top: 0.8em; }
   .btn { font-size: var(--body-s-size); min-height: var(--hit); }
   .btn--nav { font-size: var(--caption-size); min-height: 30px; }
 
-  .hero { --u: clamp(0.7px, min(86vw / 380, (100vh - 520px) / 285), 1.6px); --u: clamp(0.7px, min(86vw / 380, (100svh - 520px) / 285), 1.6px); padding-bottom: 32px; }
-  .hero__stage { padding-block: 8px 36px; }
-  .hero__content { justify-items: center; text-align: center; }
-  .hero__text .t-hero { white-space: normal; }
-  .hero__text .t-subhead { margin-inline: auto; }
+  .hero { padding-bottom: 32px; }
+  .hero .stage__mark { top: 27%; width: 80%; }
+  .hero__cta { margin-top: 24px; }
   .lg--xl { min-height: 60px; padding: 0 30px; font-size: var(--intro-size); }
-  .price-pill { justify-self: stretch; justify-content: space-between; gap: 14px; padding-left: 20px; }
+  .price-pill { width: 100%; justify-content: space-between; }
 
   .js .scene { height: 320vh; }
   .js .scene__figure { right: auto; left: 50%; top: 30%; width: 78%; transform: translate(-50%, -50%); }
@@ -744,10 +587,8 @@ p + p { margin-top: 0.8em; }
   .btn, .fcard, .option__box, .summary, .step-card, .audience__card, .stat-panel, .viewer, .price-pill, .scene__tabs, .viewer__controls { border: 1px solid ButtonText; }
   .option input:checked + .option__box { outline: 3px solid Highlight; }
   .stage__mark { fill: CanvasText; }
-  .t-grad, .t-grad-accent, .flow, .flow__text, .flow-head, .flow strong { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
+  .t-grad, .t-grad-accent { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
   .depth-grid { display: none; }
-  .lp-floor, .lp-shadow, .lp-slice, .lp-spill, .lp-sheen { display: none; }
-  .lp-w, .lp-deck, .lp-back { background: CanvasText; filter: none; }
 }
 @media print {
   .nav, .stage canvas, .scene__tabs, .viewer__controls, .gallery__arrow { display: none !important; }
@@ -755,5 +596,4 @@ p + p { margin-top: 0.8em; }
   .js .scene__sticky { position: static; height: auto; }
   .js .beat { opacity: 1; visibility: visible; transform: none; }
   .js [data-reveal] [data-reveal-item] { opacity: 1; transform: none; }
-  .t-grad, .t-grad-accent, .flow, .flow__text, .flow-head, .flow strong { background: none !important; animation: none !important; color: CanvasText; -webkit-text-fill-color: CanvasText; }
 }

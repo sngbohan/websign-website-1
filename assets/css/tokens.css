@@ -84,10 +84,6 @@
   --grad-accent-text: linear-gradient(100deg, #0f8a6a, #0a6e54);
   --brand-text: #2e4a7e;      /* einfarbiger Ersatz für Verlaufstext */
   --accent-text: #0b7a5c;
-  /* Lichttext (.flow): Verlauf im Fließtext. Jede Stufe erreicht als normaler Text mindestens 4,5:1 auf allen Flächen des Themes. */
-  --lit-1: #0d1320;
-  --lit-2: #284172;
-  --lit-3: #4766a0;
 
   /* Feste Farben für Bauteile, die immer dunkel sind (Viewer, Steuer-Pillen, Glas-Buttons) */
   --on-dark: #eef2f8;
@@ -96,26 +92,12 @@
   --on-dark-line: rgba(238, 242, 248, 0.24);
   --ink: #05070c;
   --glow-brand: radial-gradient(closest-side, rgba(71, 102, 160, 0.34), rgba(40, 65, 114, 0.12) 55%, transparent);
-  /* Rechner im Hero (3D-Modell): kühles Aluminium, Tasten, Displayfläche und die Farbe seines Lichts */
-  --alu-1: #d5dbe6;
-  --alu-2: #b4bdcc;
-  --alu-3: #8d97a8;
-  --alu-edge: rgba(13, 19, 32, 0.22);
-  --key-1: #1b2334;
-  --key-2: #0d1119;
-  --device-light: rgba(127, 155, 208, 0.6);
-  --shadow-contact: rgba(0, 0, 0, 0.7);
-  --grad-screen: radial-gradient(120% 100% at 50% 112%, #4766a0 0%, #284172 30%, #0d1730 62%, #05070c 100%);
-  --sheen: linear-gradient(128deg, rgba(238, 242, 248, 0.1) 0%, rgba(238, 242, 248, 0.03) 22%, transparent 38%);
 
   /* Materialien */
   --glass: rgba(248, 249, 252, 0.8);
   --glass-filter: saturate(170%) blur(20px);
   --control-pill: rgba(18, 24, 38, 0.72);
   --curtain: rgba(213, 219, 230, 0.45);
-  /* Glas-Kanten: feine Linie unter der Navigation; Lichtkante oben, Schattenkante unten und Außenschatten für Glas-Pillen */
-  --glass-edge: rgba(13, 19, 32, 0.08);
-  --glass-shadow: inset 0 1px 0 rgba(238, 242, 248, 0.22), inset 0 -1px 0 rgba(0, 0, 0, 0.2), 0 8px 32px rgba(0, 0, 0, 0.25);
 
   /* Layout */
   --band: min(1260px, 87.5%);
@@ -166,11 +148,7 @@
   --grad-accent-text: var(--grad-accent);
   --brand-text: #9eb1d2;
   --accent-text: #7ce0c3;
-  --lit-1: #eef2f8;
-  --lit-2: #c6d2e5;
-  --lit-3: #7f9bd0;
   --glass: rgba(13, 17, 25, 0.78);
-  --glass-edge: rgba(238, 242, 248, 0.1);
   --curtain: rgba(5, 7, 12, 0.55);
 }
 

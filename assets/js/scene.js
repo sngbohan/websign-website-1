@@ -342,7 +342,7 @@ export async function initScenes() {
   let cssW = 1, cssH = 1, fit = { w: 1, cx: 0, cy: 0 };
   const cur = baseState();
   const pointer = { x: 0, y: 0 };
-  const intro = { start: 0, done: true };
+  const intro = { start: 0, done: reduced };
   const heroShared = (window.__wsHero = window.__wsHero || {});   // hero.js schreibt hier die Helligkeit des Displays
   const viewer = { yaw: -0.45, pitch: 0.16, vy: 0, vp: 0, dragging: false, material: 'chrom', px: 0, py: 0 };
   const VIEW_HOME = { yaw: -0.45, pitch: 0.16 };
@@ -350,16 +350,21 @@ export async function initScenes() {
   const heroEl = document.querySelector('.hero');
 
   const controllers = {
-    hero() {
-      // Das Logo steht frontal auf dem Display des Rechners. hero.js meldet, wie hell das Display gerade ist:
-      // Mit dem Aufklappen blendet das Logo ein und wölbt sich auf. Es folgt dem Zeiger stärker als das Gerät,
-      // dadurch wirkt es, als läge es hinter dem Glas.
+    hero(now) {
       const t = baseState();
-      const k = heroShared.bright == null ? 1 : heroShared.bright;
-      t.yaw = pointer.x * 0.22;
-      t.pitch = 0.05 - pointer.y * 0.12;
-      t.inflate = 0.25 + 0.75 * k;
-      t.opacity = k;
+      const p = heroEl ? clamp(window.scrollY / Math.max(heroEl.offsetHeight, 1), 0, 1) : 0;
+      let e = 1;
+      if (!intro.done) {
+        if (!intro.start) intro.start = now;
+        const x = clamp((now - intro.start) / 1900, 0, 1);
+        e = 1 - Math.pow(1 - x, 3);
+        if (x >= 1) intro.done = true;
+      }
+      t.yaw = -0.5 - 0.55 * p + (1 - e) * 1.3 + pointer.x * 0.16;
+      t.pitch = 0.2 - 0.3 * p + (1 - e) * 0.25 - pointer.y * 0.1;
+      t.roll = -0.03;
+      t.scale = (0.9 + 0.1 * e) * (1 - 0.1 * p);
+      t.opacity = e;
       return t;
     },
     services() {

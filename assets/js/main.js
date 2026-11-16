@@ -50,11 +50,6 @@ function fillConfig() {
   const c = config.contact;
   $$('[data-email-link]').forEach((a) => { if (c.email) a.href = `mailto:${c.email}`; else a.removeAttribute('href'); });
   $$('[data-tel-link]').forEach((a) => { if (c.phone) a.href = `tel:${c.phone.replace(/[^+\d]/g, '')}`; else a.removeAttribute('href'); });
-  // „ab …“: kleinster gesetzter Preis einer Gruppe, z. B. data-money-min="pricing.types"
-  $$('[data-money-min]').forEach((el) => {
-    const vals = Object.values(get(el.dataset.moneyMin) || {}).filter((v) => typeof v === 'number');
-    if (vals.length) el.textContent = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Math.min(...vals));
-  });
   $$('[data-href]').forEach((a) => { const v = get(a.dataset.href); if (present(v)) a.href = v; else a.removeAttribute('href'); });
 
   // Strukturierte Daten: Kontakt nur ergänzen, wenn er in config.js steht
@@ -133,7 +128,6 @@ function initNav() {
     let theme = 'dark';
     for (const s of themed) { const r = s.getBoundingClientRect(); if (r.top <= probe && r.bottom > probe) { theme = s.dataset.theme; break; } }
     if (nav.dataset.theme !== theme) nav.dataset.theme = theme;
-    nav.classList.toggle('is-compact', window.scrollY > 24);
     const line = window.innerHeight * 0.4;
     let current = null;
     for (const t of targets) { const r = t.getBoundingClientRect(); if (r.top <= line && r.bottom > line) current = t; }
@@ -251,15 +245,12 @@ initGalleries();
 initScene();
 initSectionTracking();
 
-// Der Hero klappt direkt nach dem Start auf, deshalb lädt sein Skript sofort und nicht erst im Leerlauf.
-if ($('.lp')) import('./hero.js').then((m) => m.initHero()).catch((err) => { document.documentElement.classList.remove('hero-intro'); console.error('[Websign Hero]', err); });
-
 const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1));
 idle(() => {
   if ($('.lg')) import('./liquid-glass.js').then((m) => m.initLiquidGlass()).catch((err) => console.error('[Websign Glas]', err));
   if ($('[data-stage]')) import('./scene.js').then((m) => m.initScenes()).catch((err) => { document.documentElement.classList.add('no-webgl'); console.error('[Websign 3D]', err); });
   if ($('[data-config-form]')) import('./configurator.js').then((m) => m.initConfigurator(config, track)).catch((err) => console.error('[Websign Konfigurator]', err));
-  if ($('[data-kf], [data-kf-preset]')) import('./motion.js').then((m) => m.initMotion()).catch((err) => { document.documentElement.classList.add('no-motion'); console.error('[Websign Motion]', err); });
+  if ($('[data-kf], [data-kf-preset]')) import('./motion.js').then((m) => m.initMotion()).catch((err) => console.error('[Websign Motion]', err));
   if ($('[data-count-to]')) import('./count.js').then((m) => m.initCount()).catch((err) => console.error('[Websign Zähler]', err));
   if ($('video[data-video]')) import('./media.js').then((m) => m.initMedia()).catch((err) => console.error('[Websign Video]', err));
 });
