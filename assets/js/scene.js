@@ -223,7 +223,7 @@ const baseState = () => ({ yaw: 0, pitch: 0, roll: 0, scale: 1, oy: 0, inflate: 
 
 export async function initScenes() {
   const root = document.documentElement;
-  const stages = [...document.querySelectorAll('[data-stage]')].map((el) => ({ el, type: el.dataset.stage, mark: el.querySelector('.stage__mark'), fitK: Number(el.dataset.fit) || 0, area: 0 }));
+  const stages = [...document.querySelectorAll('[data-stage]')].map((el) => ({ el, type: el.dataset.stage, mark: el.querySelector('.stage__mark'), area: 0 }));
   if (!stages.length) return;
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -331,7 +331,7 @@ export async function initScenes() {
   gl.uniform3f(U.uBox, (BOX.x0 + BOX.x1) / 2, (BOX.y0 + BOX.y1) / 2, (BOX.x1 - BOX.x0) / 2);
   gl.uniform1f(U.uPuff, PUFF);
   gl.uniform3f(U.uCam, 0, 0, CAM_D);
-  gl.uniform3f(U.uFlatColor, 0.933, 0.949, 0.973);   // --on-dark
+  gl.uniform3f(U.uFlatColor, 0.961, 0.961, 0.969);
 
   // ----- Zustand -----
   const dprCap = small || !finePointer ? 1.5 : 2;
@@ -342,24 +342,28 @@ export async function initScenes() {
   let cssW = 1, cssH = 1, fit = { w: 1, cx: 0, cy: 0 };
   const cur = baseState();
   const pointer = { x: 0, y: 0 };
-  const intro = { start: 0, done: true };
-  const heroShared = (window.__wsHero = window.__wsHero || {});   // hero.js schreibt hier die Helligkeit des Displays
+  const intro = { start: 0, done: reduced };
   const viewer = { yaw: -0.45, pitch: 0.16, vy: 0, vp: 0, dragging: false, material: 'chrom', px: 0, py: 0 };
   const VIEW_HOME = { yaw: -0.45, pitch: 0.16 };
   const sceneEl = document.querySelector('[data-scene]');
   const heroEl = document.querySelector('.hero');
 
   const controllers = {
-    hero() {
-      // Das Logo steht frontal auf dem Display des Rechners. hero.js meldet, wie hell das Display gerade ist:
-      // Mit dem Aufklappen blendet das Logo ein und wölbt sich auf. Es folgt dem Zeiger stärker als das Gerät,
-      // dadurch wirkt es, als läge es hinter dem Glas.
+    hero(now) {
       const t = baseState();
-      const k = heroShared.bright == null ? 1 : heroShared.bright;
-      t.yaw = pointer.x * 0.22;
-      t.pitch = 0.05 - pointer.y * 0.12;
-      t.inflate = 0.25 + 0.75 * k;
-      t.opacity = k;
+      const p = heroEl ? clamp(window.scrollY / Math.max(heroEl.offsetHeight, 1), 0, 1) : 0;
+      let e = 1;
+      if (!intro.done) {
+        if (!intro.start) intro.start = now;
+        const x = clamp((now - intro.start) / 1900, 0, 1);
+        e = 1 - Math.pow(1 - x, 3);
+        if (x >= 1) intro.done = true;
+      }
+      t.yaw = -0.5 - 0.55 * p + (1 - e) * 1.3 + pointer.x * 0.16;
+      t.pitch = 0.2 - 0.3 * p + (1 - e) * 0.25 - pointer.y * 0.1;
+      t.roll = -0.03;
+      t.scale = (0.9 + 0.1 * e) * (1 - 0.1 * p);
+      t.opacity = e;
       return t;
     },
     services() {
@@ -392,16 +396,10 @@ export async function initScenes() {
   // ----- Größe und Einpassung: Das 3D-Logo sitzt genau dort, wo das Standbild sitzt -----
   function measure() {
     if (!active) return;
-    if (active.fitK) {
-      // Bühne liegt in einer 3D-Fläche (Display des Rechners): Dort zählt die Layout-Größe, nicht das projizierte Rechteck.
-      cssW = Math.max(1, active.el.offsetWidth); cssH = Math.max(1, active.el.offsetHeight);
-      fit = { w: cssW * active.fitK, cx: cssW / 2, cy: cssH * 0.44 };
-    } else {
-      const sr = active.el.getBoundingClientRect();
-      cssW = Math.max(1, Math.round(sr.width)); cssH = Math.max(1, Math.round(sr.height));
-      const mr = active.mark.getBoundingClientRect();
-      fit = { w: mr.width, cx: mr.left + mr.width / 2 - sr.left, cy: mr.top + mr.height / 2 - sr.top };
-    }
+    const sr = active.el.getBoundingClientRect();
+    cssW = Math.max(1, Math.round(sr.width)); cssH = Math.max(1, Math.round(sr.height));
+    const mr = active.mark.getBoundingClientRect();
+    fit = { w: mr.width, cx: mr.left + mr.width / 2 - sr.left, cy: mr.top + mr.height / 2 - sr.top };
     const dpr = Math.min(window.devicePixelRatio || 1, dprCap) * quality;
     const w = Math.round(cssW * dpr), h = Math.round(cssH * dpr);
     if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
@@ -464,7 +462,6 @@ export async function initScenes() {
     if (moving) wake(); else last = 0;
   }
   function wake() { if (!raf && alive && active && !document.hidden) raf = requestAnimationFrame(frame); }
-  heroShared.wake = wake;
 
   // ----- Bühne wechseln: Canvas wandert in die sichtbarste Bühne -----
   function activate(stage) {

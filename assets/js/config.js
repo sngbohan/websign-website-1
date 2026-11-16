@@ -1,36 +1,22 @@
 // Websign · Inhalte an einer Stelle
-// Alles, was noch fehlt, steht hier als null. Solange ein Wert null ist, blendet die Website
-// die zugehörige Stelle aus oder zeigt einen neutralen Ausweichtext. Nichts Unfertiges ist live sichtbar.
-// Lokal zeigt http://127.0.0.1:4173/?dev alle offenen Stellen als orange Platzhalter in [eckigen Klammern].
-// `node tools/check.mjs` listet auf, welche Pflichtangaben noch fehlen.
+// Alles, was noch fehlt, steht hier als null. Solange ein Wert null ist, zeigt die Website
+// an der Stelle einen orange markierten Platzhalter in [eckigen Klammern].
+// Trage die echten Angaben ein, dann verschwinden die Platzhalter von selbst.
 
 export const config = {
-  site: {
-    // Öffentliche Adresse mit Schrägstrich am Ende. Sie steht zusätzlich fest in index.html (canonical, og:url,
-    // og:image, JSON-LD), sitemap.xml und robots.txt. Bei einem Domainwechsel alle Stellen anpassen;
-    // tools/check.mjs meldet Abweichungen.
-    url: 'https://sngbohan.github.io/websign-website-1/',
-  },
-
   contact: {
-    email: null,            // z. B. 'hallo@deine-domain.de' (Pflicht fürs Impressum)
+    email: null,            // z. B. 'hallo@deine-domain.de'
     phone: null,            // z. B. '+49 30 1234567'
-    bookingUrl: null,       // Termin-Link, z. B. eigene Kalender-Seite
-    responseTime: null,     // nur die Dauer, sie steht hinter „innerhalb von“: z. B. 'zwei Werktagen' oder '24 Stunden'
-    city: null,             // Ort des Studios ohne PLZ, z. B. 'Berlin'
   },
 
   legal: {
-    owner: null,            // Zusatz hinter „Websign“ im Copyright, z. B. '· Max Mustermann' oder 'GmbH'
-    name: null,             // vollständiger Name bzw. Firma mit Rechtsform (Pflicht)
-    street: null,           // Straße und Hausnummer (Pflicht)
-    city: null,             // PLZ und Ort (Pflicht)
+    owner: null,            // z. B. '· Max Mustermann' oder 'GmbH'
+    name: null,             // vollständiger Name bzw. Firma für das Impressum
+    street: null,
+    city: null,             // PLZ und Ort
     vatId: null,            // USt-IdNr., falls vorhanden
-    responsible: null,      // inhaltlich verantwortlich nach § 18 Abs. 2 MStV: Name und Anschrift
-    authority: null,        // zuständige Datenschutz-Aufsichtsbehörde, z. B. 'Berliner Beauftragte für Datenschutz und Informationsfreiheit'
-    formProcessor: null,    // nur mit form.endpoint: Name und Anschrift des Formular-Dienstes
-    // Hosting-Anbieter für die Datenschutzerklärung. Voreingestellt für GitHub Pages.
-    hosting: 'GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA',
+    responsible: null,      // inhaltlich verantwortlich
+    hosting: null,          // Hosting-Anbieter mit Anschrift (für die Datenschutzerklärung)
   },
 
   // Versand der Projektanfrage:
@@ -42,8 +28,7 @@ export const config = {
   },
 
   // Preislogik des Konfigurators. Richtpreis = Projektart + Ausgangslage + Umfang + Extras.
-  // Beträge in Euro ohne Tausenderpunkt. 0 bedeutet „inklusive“, null bedeutet „auf Anfrage“.
-  // Steht bei keiner Projektart ein Preis, zeigt der Konfigurator keine Preise und verspricht den Richtpreis per E-Mail.
+  // Beträge in Euro ohne Tausenderpunkt. 0 bedeutet „inklusive“, null bedeutet „noch offen“.
   pricing: {
     vatNote: null,          // z. B. 'Alle Preise zzgl. 19 % MwSt.' oder 'Kein Ausweis der Umsatzsteuer nach § 19 UStG.'
     types: {                // Startpreis je Projektart („ab …“)
@@ -76,12 +61,7 @@ export const config = {
     gross: 'Mehr als 15 Seiten',
   },
 
-  // Projekte für die Galerie. Leer = die Sektion „Projekte“ und ihre Links sind ausgeblendet.
-  // Nur echte Projekte mit Freigabe des Kunden eintragen.
-  // Beispiel: { name: 'Kundenname', meta: 'Branche · Leistung', image: 'assets/media/projekte/kunde-1120.jpg', alt: 'Was auf dem Bild zu sehen ist', url: 'arbeiten/kunde.html' }
+  // Projekte für die Galerie. Leer = Platzhalterkarten.
+  // Beispiel: { name: 'Kundenname', meta: 'Branche · Leistung', image: 'assets/img/projekte/kunde.jpg', alt: 'Was auf dem Bild zu sehen ist', url: 'https://…' }
   projects: [],
 };
-
-// Pflichtangaben nach § 5 DDG. Fehlt eine, zeigen Impressum und Datenschutz den Hinweis
-// „Diese Angaben werden gerade ergänzt“ und tools/check.mjs schlägt fehl.
-export const REQUIRED_LEGAL = ['legal.name', 'legal.street', 'legal.city', 'contact.email'];
