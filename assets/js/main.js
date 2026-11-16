@@ -133,6 +133,7 @@ function initNav() {
     let theme = 'dark';
     for (const s of themed) { const r = s.getBoundingClientRect(); if (r.top <= probe && r.bottom > probe) { theme = s.dataset.theme; break; } }
     if (nav.dataset.theme !== theme) nav.dataset.theme = theme;
+    nav.classList.toggle('is-compact', window.scrollY > 24);
     const line = window.innerHeight * 0.4;
     let current = null;
     for (const t of targets) { const r = t.getBoundingClientRect(); if (r.top <= line && r.bottom > line) current = t; }
@@ -249,6 +250,9 @@ initModals();
 initGalleries();
 initScene();
 initSectionTracking();
+
+// Der Hero klappt direkt nach dem Start auf, deshalb lädt sein Skript sofort und nicht erst im Leerlauf.
+if ($('.lp')) import('./hero.js').then((m) => m.initHero()).catch((err) => { document.documentElement.classList.remove('hero-intro'); console.error('[Websign Hero]', err); });
 
 const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1));
 idle(() => {

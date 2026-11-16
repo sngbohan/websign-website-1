@@ -49,6 +49,8 @@
       var c = d.documentElement.classList;
       c.remove('no-js'); c.add('js');
       if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) c.add('reduced-motion');
+      // Hero: Der Rechner startet geschlossen im Profil und klappt dann auf (assets/js/hero.js). Ohne Bewegung: direkt der Endzustand.
+      else c.add('hero-intro');
       // Entwicklungsmodus (nur lokal, nur mit ?dev): offene Stellen bleiben als orange Platzhalter sichtbar
       if (/[?&]dev(=|&|$)/.test(location.search) && /^(localhost|127\.0\.0\.1|\[::1\])?$/.test(location.hostname)) c.add('dev');
       // Sicherheitsnetz: Lädt das Skript nicht, fällt die Seite auf die Variante ohne JavaScript zurück
@@ -115,17 +117,44 @@
     <!-- 1 · Hero: Bühne mit Gerät, darunter Botschaft (links) und Handlung (rechts) -->
     <section class="hero" id="top" data-theme="dark" data-section="hero">
       <div class="hero__stage">
-        <!-- Neutraler, selbst gezeichneter Rechner im Profil. Der Deckel öffnet sich beim Laden (--intro) und schließt sich
-             beim Wegscrollen etwas (--open über motion.js). Unter dem Deckel leuchtet das Logo, darüber bleibt die Kontur. -->
-        <div class="device" data-kf='{"start":"a0t","end":"a0b","open":[1,0.5]}' data-kf-anchors="#top">
-          <div class="depth-grid" aria-hidden="true"></div>
-          <div class="device__glow" aria-hidden="true"></div>
-          <svg class="device__ghost" viewBox="0 0 608.5 268.5" aria-hidden="true" focusable="false"><use href="#ws-mark"/></svg>
-          <div class="stage device__screen" data-stage="hero">
-            <svg class="stage__mark" viewBox="0 0 608.5 268.5" role="img" aria-label="Das Websign Logo, die Buchstaben W und S als eine durchgehende Form, leuchtet unter dem aufgeklappten Deckel eines Rechners"><use href="#ws-mark"/></svg>
+        <!-- Rechner als 3D-Modell aus CSS: neutral, selbst gebaut, ohne Markenbezug. Maße in Einheiten (--u):
+             312 breit, 221 tief, Unterteil 11,5 hoch, Deckel 4. Bewegung und Kamera steuert assets/js/hero.js.
+             Die Wandflächen (lp-w) sind einmalig berechnet: je Ring vier gerade Flächen und zwölf schmale für die runden Ecken. -->
+        <div class="lp-scene" aria-hidden="true" data-hero-device>
+          <div class="lp">
+            <div class="lp-floor"></div>
+            <div class="lp-shadow"></div>
+            <div class="lp-base">
+              <i class="lp-w" style="--x:-146;--z:110.5;--b:0;--w:292;--l:0.99"></i><i class="lp-w" style="--x:146;--z:-110.5;--b:180;--w:292;--l:0.62"></i><i class="lp-w" style="--x:-156;--z:-100.5;--b:-90;--w:201;--l:0.81"></i><i class="lp-w" style="--x:156;--z:100.5;--b:90;--w:201;--l:0.62"></i><i class="lp-w" style="--x:154.61;--z:105.7;--b:75;--w:5.59;--l:0.62"></i><i class="lp-w" style="--x:150.85;--z:109.31;--b:45;--w:5.59;--l:0.75"></i><i class="lp-w" style="--x:145.8;--z:110.55;--b:15;--w:5.59;--l:0.93"></i><i class="lp-w" style="--x:-151.2;--z:109.11;--b:-15;--w:5.59;--l:1.03"></i><i class="lp-w" style="--x:-154.81;--z:105.35;--b:-45;--w:5.59;--l:1.02"></i><i class="lp-w" style="--x:-156.05;--z:100.3;--b:-75;--w:5.59;--l:0.9"></i><i class="lp-w" style="--x:-154.61;--z:-105.7;--b:-105;--w:5.59;--l:0.71"></i><i class="lp-w" style="--x:-150.85;--z:-109.31;--b:-135;--w:5.59;--l:0.62"></i><i class="lp-w" style="--x:-145.8;--z:-110.55;--b:-165;--w:5.59;--l:0.62"></i><i class="lp-w" style="--x:151.2;--z:-109.11;--b:-195;--w:5.59;--l:0.62"></i><i class="lp-w" style="--x:154.81;--z:-105.35;--b:-225;--w:5.59;--l:0.62"></i><i class="lp-w" style="--x:156.05;--z:-100.3;--b:-255;--w:5.59;--l:0.62"></i>
+              <div class="lp-deck">
+                <div class="lp-keys"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="lp-pad"></div>
+                <div class="lp-notch"></div>
+                <div class="lp-spill"></div>
+              </div>
+              <div class="lp-hinge"></div>
+            </div>
+            <div class="lp-lid">
+              <i class="lp-w" style="--x:-146;--z:221;--b:0;--w:292;--l:0.99"></i><i class="lp-w" style="--x:146;--z:0;--b:180;--w:292;--l:0.62"></i><i class="lp-w" style="--x:-156;--z:10;--b:-90;--w:201;--l:0.81"></i><i class="lp-w" style="--x:156;--z:211;--b:90;--w:201;--l:0.62"></i><i class="lp-w" style="--x:154.61;--z:216.2;--b:75;--w:5.59;--l:0.62"></i><i class="lp-w" style="--x:150.85;--z:219.81;--b:45;--w:5.59;--l:0.75"></i><i class="lp-w" style="--x:145.8;--z:221.05;--b:15;--w:5.59;--l:0.93"></i><i class="lp-w" style="--x:-151.2;--z:219.61;--b:-15;--w:5.59;--l:1.03"></i><i class="lp-w" style="--x:-154.81;--z:215.85;--b:-45;--w:5.59;--l:1.02"></i><i class="lp-w" style="--x:-156.05;--z:210.8;--b:-75;--w:5.59;--l:0.9"></i><i class="lp-w" style="--x:-154.61;--z:4.8;--b:-105;--w:5.59;--l:0.71"></i><i class="lp-w" style="--x:-150.85;--z:1.19;--b:-135;--w:5.59;--l:0.62"></i><i class="lp-w" style="--x:-145.8;--z:-0.05;--b:-165;--w:5.59;--l:0.62"></i><i class="lp-w" style="--x:151.2;--z:1.39;--b:-195;--w:5.59;--l:0.62"></i><i class="lp-w" style="--x:154.81;--z:5.15;--b:-225;--w:5.59;--l:0.62"></i><i class="lp-w" style="--x:156.05;--z:10.2;--b:-255;--w:5.59;--l:0.62"></i>
+              <div class="lp-back"></div>
+              <div class="lp-front">
+                <span class="lp-cam"></span>
+                <div class="lp-display">
+                  <div class="depth-grid"></div>
+                  <div class="stage lp-stage" data-stage="hero" data-fit="0.62">
+                    <svg class="stage__mark" viewBox="0 0 608.5 268.5" focusable="false"><use href="#ws-mark"/></svg>
+                  </div>
+                  <div class="lp-sheen"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Profil-Ansicht: Das Logo leuchtet im Keil unter dem Deckel, darüber bleibt die Kontur -->
+            <div class="lp-slice">
+              <svg class="lp-ghost" viewBox="0 0 608.5 268.5" focusable="false"><use href="#ws-mark"/></svg>
+              <div class="lp-lit"><svg viewBox="0 0 608.5 268.5" focusable="false"><use href="#ws-mark"/></svg></div>
+              <span class="lp-beam"></span>
+            </div>
           </div>
-          <div class="device__lid" aria-hidden="true"></div>
-          <div class="device__base" aria-hidden="true"></div>
         </div>
       </div>
       <div class="band hero__content" data-reveal>
@@ -135,7 +164,7 @@
           <p class="t-subhead" data-reveal-item>Marke, Website und 3D aus einem Studio. Gebaut, um im Kopf zu bleiben.</p>
           <p data-reveal-item><a class="link link--chevron" href="#leistungen" data-track="cta-hero-leistungen">Leistungen ansehen</a></p>
         </div>
-        <div class="price-pill" data-reveal-item>
+        <div class="price-pill lg lg--panel" data-glass-strength="24" data-reveal-item>
           <p class="price-pill__text">
             <span class="price-pill__main"><span data-requires="pricing.types">Websites ab <span data-money-min="pricing.types"><mark class="ph">[PREIS]</mark></span><sup class="fn"><a href="#fn-5" aria-label="Fußnote 5">5</a></sup></span><span data-requires-not="pricing.types">Angebot nach kurzem Gespräch</span></span>
             <span class="price-pill__sub"><span data-requires="pricing.types">Richtpreis in fünf Schritten</span><span data-requires-not="pricing.types">Dein Projekt in fünf Schritten</span></span>
@@ -303,7 +332,7 @@
             </div>
             <div class="stat" data-reveal-item>
               <dt class="stat__eyebrow">JavaScript gesamt</dt>
-              <dd class="stat__value">25&nbsp;KB</dd>
+              <dd class="stat__value">28&nbsp;KB</dd>
               <dd class="stat__label">Für Navigation, Animation, 3D, Glas-Button und Konfigurator zusammen.<sup class="fn"><a href="#fn-3" id="fnref-3" aria-label="Fußnote 3">3</a></sup></dd>
             </div>
             <div class="stat" data-reveal-item>
@@ -532,7 +561,7 @@
         <ol class="footnotes">
           <li id="fn-1"><a href="#fnref-1" aria-label="Zurück zum Text, Fußnote 1">1.</a><span>Geprüft am 14.11.2026 im Netzwerk-Protokoll des Browsers: Alle Dateien dieser Seite, auch die Schrift, werden von derselben Adresse geladen wie die Seite selbst.</span></li>
           <li id="fn-2"><a href="#fnref-2" aria-label="Zurück zum Text, Fußnote 2">2.</a><span>Geprüft am 14.11.2026: Die Seite setzt keine Cookies und nutzt weder localStorage noch sessionStorage.</span></li>
-          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der sechs JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Unkomprimiert 66&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 14.11.2026.</span></li>
+          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der sieben JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Unkomprimiert 73&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 16.11.2026.</span></li>
           <li id="fn-4"><a href="#fnref-4" aria-label="Zurück zum Text, Fußnote 4">4.</a><span>Geometrie-Daten des Logos, mit gzip (Stufe 9) komprimiert. Unkomprimiert 760&nbsp;KB. Der Server komprimiert etwas schwächer und überträgt rund 178&nbsp;KB. Gemessen am 14.11.2026.</span></li>
           <li id="fn-5"><a href="#fnref-5" aria-label="Zurück zum Text, Fußnote 5">5.</a><span>Der Richtpreis ist unverbindlich und ersetzt kein Angebot. Er ergibt sich aus Projektart, Ausgangslage, Umfang und Extras.<span data-requires="pricing.vatNote"> <span data-config="pricing.vatNote"><mark class="ph">[Hinweis netto/brutto]</mark></span></span></span></li>
         </ol>
