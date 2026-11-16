@@ -1,0 +1,11 @@
+# Websign
+# Hinweis: Suchmaschinen lesen robots.txt nur im Wurzelverzeichnis einer Domain. Solange die Seite unter
+# sngbohan.github.io/websign-website-1/ liegt, wirkt diese Datei nicht. Sie greift, sobald eine eigene Domain
+# eingerichtet ist (Phase 8). Die interne Testseite trägt deshalb zusätzlich <meta name="robots" content="noindex">.
+
+User-agent: *
+Allow: /
+Disallow: /tools/
+Disallow: /websign-website-1/tools/
+
+Sitemap: https://sngbohan.github.io/websign-website-1/sitemap.xml
