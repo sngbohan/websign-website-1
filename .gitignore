@@ -1,1 +1,9 @@
 .DS_Store
+
+# Higgsfield CLI skills (lokal installiert)
+.agents/
+.claude/
+skills-lock.json
+
+# Interne Dokumente (Briefings, Analysen): nur lokal, nicht auf GitHub
+docs/
