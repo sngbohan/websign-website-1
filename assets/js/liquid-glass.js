@@ -98,18 +98,31 @@ export function initLiquidGlass(root = document) {
     return item;
   });
 
-  // Karte in exakter Größe des Elements, bei jeder Größenänderung neu
+  // Karte passend zum Element, bei jeder Größenänderung neu. Gerechnet wird in halber Auflösung: Die Karte ist ein
+  // weicher Verlauf, feImage skaliert sie auf volle Größe, und es sind nur ein Viertel der Pixel.
   const size = (item) => {
     if (!refract) return;
     const w = Math.round(item.node.offsetWidth), h = Math.round(item.node.offsetHeight);
     if (!w || !h) return;
     const radius = parseFloat(getComputedStyle(item.node).borderTopLeftRadius) || 0;
     const bezel = Math.max(8, Math.round(Math.min(w, h) * 0.34));
-    const url = displacementMap(w, h, radius, bezel);
+    const url = displacementMap(Math.ceil(w / 2), Math.ceil(h / 2), radius / 2, Math.max(4, Math.round(bezel / 2)));
     for (const [k, v] of [['width', w], ['height', h]]) { item.filter.setAttribute(k, v); item.image.setAttribute(k, v); }
     item.image.setAttribute('href', url);
     setScale(item);
   };
+  // Je Glasstück eine eigene, kurze Aufgabe statt alle auf einmal: Der Hauptthread bleibt beim Start frei.
+  const queue = new Set();
+  let draining = false;
+  const later = window.requestIdleCallback ? (fn) => requestIdleCallback(fn, { timeout: 500 }) : (fn) => setTimeout(fn, 1);
+  const drain = () => {
+    const [item] = queue;
+    if (!item) { draining = false; return; }
+    queue.delete(item);
+    size(item);
+    later(drain);
+  };
+  const schedule = (item) => { if (!item) return; queue.add(item); if (!draining) { draining = true; later(drain); } };
   const setScale = (item) => {
     if (!refract) return;
     const s = item.strength * (item.pressed ? 1.2 : 1);
@@ -117,8 +130,9 @@ export function initLiquidGlass(root = document) {
     item.maps[1].setAttribute('scale', s);
     item.maps[2].setAttribute('scale', s - 4);   // Blau etwas schwächer: feiner Farbsaum an der Kante
   };
-  if ('ResizeObserver' in window) { const ro = new ResizeObserver((entries) => entries.forEach((en) => size(items.find((i) => i.node === en.target)))); items.forEach((i) => ro.observe(i.node)); }
-  items.forEach(size);
+  // Der ResizeObserver meldet jedes Element einmal beim Beobachten; das ist zugleich die erste Berechnung.
+  if ('ResizeObserver' in window) { const ro = new ResizeObserver((entries) => entries.forEach((en) => schedule(items.find((i) => i.node === en.target)))); items.forEach((i) => ro.observe(i.node)); }
+  else items.forEach(schedule);
 
   // Druck: Glas wird „flüssiger“
   for (const item of items) {

@@ -191,7 +191,10 @@ void main() {
   outColor = vec4(col * a, a) * uOpacity;
 }`;
 
-// ---------- kleine Mathe-Helfer ----------
+// ---------- kleine Helfer ----------
+// Gibt den Hauptthread kurz frei: Der Start wird so in viele kurze Aufgaben geteilt statt einer langen,
+// und Eingaben oder das erste Bild der Seite müssen nicht auf das 3D-Modell warten.
+const pause = () => (globalThis.scheduler && scheduler.yield ? scheduler.yield() : new Promise((r) => setTimeout(r, 0)));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 
@@ -244,6 +247,7 @@ export async function initScenes() {
     if (!res.ok) throw new Error(res.status);
     buf = await res.arrayBuffer();
   } catch (err) { root.classList.add('no-webgl'); return; }
+  await pause();
   const head = new DataView(buf, 0, 24);
   const FW = head.getUint16(4, true), FH = head.getUint16(6, true);
   const ranges = [[head.getFloat32(8, true), head.getFloat32(12, true)], [head.getFloat32(16, true), head.getFloat32(20, true)]];
@@ -251,6 +255,7 @@ export async function initScenes() {
   const fieldData = new Float32Array(FW * FH * 2);          // R = Abstand zur Kontur, G = Ballon-Fläche
   const q = new Uint16Array(FW * FH);
   for (let pl = 0; pl < 2; pl++) {
+    if (pl) await pause();
     const [lo, hi] = ranges[pl], off = pl * FW * FH;
     for (let y = 0, i = 0; y < FH; y++) for (let x = 0; x < FW; x++, i++) {
       // 2D-Prädiktor rückgängig machen (Uint16 rechnet von selbst modulo 65536)
@@ -260,20 +265,22 @@ export async function initScenes() {
   }
 
   // ----- Programm -----
-  const compile = (type, src) => {
-    const s = gl.createShader(type);
-    gl.shaderSource(s, src); gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
-    return s;
-  };
+  // Shader werden, wo der Browser es kann, im Hintergrund übersetzt (KHR_parallel_shader_compile).
+  // Status erst abfragen, wenn die Übersetzung fertig ist: Jede frühere Abfrage würde den Hauptthread anhalten.
+  const parallel = gl.getExtension('KHR_parallel_shader_compile');
+  const shader = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
   let prog;
   try {
+    const vs = shader(gl.VERTEX_SHADER, VERT), fs = shader(gl.FRAGMENT_SHADER, FRAG);
     prog = gl.createProgram();
-    gl.attachShader(prog, compile(gl.VERTEX_SHADER, VERT));
-    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FRAG));
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs);
     gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+    if (parallel) while (!gl.getProgramParameter(prog, parallel.COMPLETION_STATUS_KHR)) await new Promise((r) => setTimeout(r, 16));
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      throw new Error(gl.getShaderInfoLog(vs) || gl.getShaderInfoLog(fs) || gl.getProgramInfoLog(prog));
+    }
   } catch (err) { console.error('[Websign 3D]', err); root.classList.add('no-webgl'); return; }
+  await pause();
   gl.useProgram(prog);
   const U = {};
   for (const name of ['uField', 'uViewProj', 'uRot', 'uOffset', 'uScale', 'uBox', 'uPuff', 'uInflate', 'uSide', 'uCam', 'uOutline', 'uWire', 'uSweep', 'uFlat', 'uMetal', 'uRough', 'uSpec', 'uOpacity', 'uAlbedo', 'uTint', 'uFlatColor']) {
@@ -290,6 +297,7 @@ export async function initScenes() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.uniform1i(U.uField, 0);
+  await pause();
 
   // ----- Gitter: nur Zellen, die das Logo berühren -----
   const step = small ? 2.4 : 1.5;
@@ -322,6 +330,7 @@ export async function initScenes() {
   gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(idx), gl.STATIC_DRAW);
+  await pause();
 
   gl.enable(gl.DEPTH_TEST);
   gl.depthFunc(gl.LEQUAL);
