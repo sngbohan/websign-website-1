@@ -528,6 +528,9 @@ p + p { margin-top: 0.8em; }
   transition-delay: calc(var(--i, 0) * var(--reveal-stagger));
 }
 .js [data-reveal].is-revealed [data-reveal-item] { opacity: 1; transform: none; }
+/* Im Hero ist der Text ab dem ersten Bild sichtbar und gleitet nur hoch: Die Überschrift ist das LCP-Element,
+   und ein Element mit opacity 0 zählt erst, wenn es einblendet. Das kostete mobil rund 1 s LCP. */
+.js .hero [data-reveal-item] { opacity: 1; transition-property: transform; }
 
 /* ---------- M · 735–1068 px ---------- */
 @media (max-width: 1068px) {
