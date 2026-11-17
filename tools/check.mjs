@@ -65,7 +65,7 @@ const optional = {
   'form.endpoint': 'Anfragen öffnen das E-Mail-Programm (mailto)',
   'pricing.types': 'keine Preise: Preisschilder aus, Richtpreis „per E-Mail“',
   'pricing.vatNote': 'kein Hinweis netto/brutto',
-  projects: 'Sektion „Projekte“ und ihre Links sind ausgeblendet',
+  projects: 'Sektion „Projekte“ zeigt drei Beispiel-Ordner „Projekt 1–3“',
 };
 for (const [path, effect] of Object.entries(optional)) if (!present(get(path))) notes.push(`${path} ist leer → ${effect}`);
 if (present(get('pricing.types'))) {

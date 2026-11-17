@@ -65,25 +65,6 @@ function fillConfig() {
     } catch (err) { /* unverändert lassen */ }
   }
 
-  const list = $('[data-projects]');
-  if (list && config.projects.length) {
-    list.textContent = '';
-    for (const p of config.projects) {
-      const li = document.createElement('li');
-      li.className = 'project';
-      const media = document.createElement(p.url ? 'a' : 'div');
-      media.className = 'project__media';
-      if (p.url) media.href = p.url;
-      const img = document.createElement('img');
-      img.src = p.image; img.alt = p.alt || ''; img.width = p.width || 1120; img.height = p.height || 700;
-      img.loading = 'lazy'; img.decoding = 'async';
-      media.append(img);
-      const h = document.createElement('h3'); h.className = 't-card'; h.textContent = p.name;
-      const m = document.createElement('p'); m.textContent = p.meta || '';
-      li.append(media, h, m);
-      list.append(li);
-    }
-  }
 }
 
 // ---------- Reveal: ein Standard für alle Sektionen ----------
@@ -249,6 +230,7 @@ const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1));
 idle(() => {
   if ($('.lg')) import('./liquid-glass.js').then((m) => m.initLiquidGlass()).catch((err) => console.error('[Websign Glas]', err));
   if ($('[data-stage]')) import('./scene.js').then((m) => m.initScenes()).catch((err) => { document.documentElement.classList.add('no-webgl'); console.error('[Websign 3D]', err); });
+  if ($('[data-folders]')) import('./glass-folder.js').then((m) => m.initFolders(config, track)).catch((err) => console.error('[Websign Projekte]', err));
   if ($('[data-config-form]')) import('./configurator.js').then((m) => m.initConfigurator(config, track)).catch((err) => console.error('[Websign Konfigurator]', err));
   if ($('[data-kf], [data-kf-preset]')) import('./motion.js').then((m) => m.initMotion()).catch((err) => console.error('[Websign Motion]', err));
   if ($('[data-count-to]')) import('./count.js').then((m) => m.initCount()).catch((err) => console.error('[Websign Zähler]', err));

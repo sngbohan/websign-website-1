@@ -76,10 +76,32 @@ export const config = {
     gross: 'Mehr als 15 Seiten',
   },
 
-  // Projekte für die Galerie. Leer = die Sektion „Projekte“ und ihre Links sind ausgeblendet.
-  // Nur echte Projekte mit Freigabe des Kunden eintragen.
-  // Beispiel: { name: 'Kundenname', meta: 'Branche · Leistung', image: 'assets/media/projekte/kunde-1120.jpg', alt: 'Was auf dem Bild zu sehen ist', url: 'arbeiten/kunde.html' }
+  // Projekte als Glasordner (Sektion „Projekte“). Leer = drei Beispiel-Ordner „Projekt 1–3“.
+  // Nur echte Projekte mit Freigabe des Kunden eintragen. Ein Ordner pro Projekt, bis zu vier Dateien darin;
+  // die erste Datei liegt vorn. Ein Klick auf eine Datei öffnet sie groß.
+  //   name    Kundenname (sichtbar erst mit showProjectNames: true)
+  //   meta    zweite Zeile, z. B. 'Gastronomie · Website & Logo' (Standard: Anzahl der Dateien)
+  //   url     Live-Website: Pfeil-Taste und „Website ansehen“ in der Dateiansicht (optional)
+  //   tone    'dark' (Rauchglas) oder 'light' (Milchglas)
+  //   art     Rückwand: 'navy', 'chrom', 'eis', 'aurora', 'ember', 'dusk', 'verdant' oder 'none'
+  //   seed    andere Anordnung desselben Kunstwerks (Zahl)
+  //   image   eigenes Bild für die Rückwand statt Kunstwerk (364 × 296 px)
+  //   labelPlacement  'bottom-left', 'top-left' oder 'top-right'
+  //   files   [{ name, meta, image, alt, art, href }]: image = Screenshot (544 × 368 px), sonst art oder ein Blatt Papier
+  // Beispiel:
+  // {
+  //   name: 'Kundenname', meta: 'Branche · Leistung', url: 'https://…',
+  //   tone: 'dark', art: 'navy', seed: 4,
+  //   files: [
+  //     { name: 'Startseite', meta: 'Desktop', image: 'assets/media/projekte/kunde-start.jpg', alt: 'Was auf dem Bild zu sehen ist' },
+  //     { name: 'Mobil', meta: 'Responsive', image: 'assets/media/projekte/kunde-mobil.jpg', alt: 'Was auf dem Bild zu sehen ist' },
+  //     { name: 'Logo', meta: 'SVG', art: 'eis' },
+  //   ],
+  // },
   projects: [],
+
+  // false = Ordner heißen „Projekt 1“, „Projekt 2“ … statt Kundenname (z. B. solange Freigaben fehlen)
+  showProjectNames: false,
 };
 
 // Pflichtangaben nach § 5 DDG. Fehlt eine, zeigen Impressum und Datenschutz den Hinweis

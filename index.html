@@ -44,6 +44,7 @@
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/liquid-glass.css">
+  <link rel="stylesheet" href="assets/css/glass-folder.css">
   <script>
     (function (d) {
       var c = d.documentElement.classList;
@@ -80,7 +81,7 @@
       <ul class="nav__links" data-scrollspy>
         <li><a href="#leistungen">Leistungen</a></li>
         <li><a href="#material">3D</a></li>
-        <li data-requires="projects"><a href="#projekte">Projekte</a></li>
+        <li><a href="#projekte">Projekte</a></li>
         <li><a href="#ablauf">Ablauf</a></li>
       </ul>
       <div class="nav__end">
@@ -101,7 +102,7 @@
     <ul class="menu__list">
       <li style="--i:0"><a class="t-card" href="#leistungen">Leistungen</a></li>
       <li style="--i:1"><a class="t-card" href="#material">3D</a></li>
-      <li style="--i:2" data-requires="projects"><a class="t-card" href="#projekte">Projekte</a></li>
+      <li style="--i:2"><a class="t-card" href="#projekte">Projekte</a></li>
       <li style="--i:3"><a class="t-card" href="#ablauf">Ablauf</a></li>
       <li style="--i:4"><a class="t-card" href="#konfigurator">Projekt konfigurieren</a></li>
     </ul>
@@ -236,33 +237,27 @@
       </div>
     </section>
 
-    <!-- 6 · Projekte: nur sichtbar, wenn config.projects echte Projekte enthält. Die Platzhalterkarten erscheinen nur mit ?dev. -->
-    <section class="section" id="projekte" data-theme="dark" data-section="projekte" data-reveal data-requires="projects">
+    <!-- 6 · Projekte als Glasordner (assets/js/glass-folder.js). Inhalte kommen aus config.projects; solange die Liste leer ist, erscheinen drei Beispiel-Ordner. Namen stehen erst da, wenn config.showProjectNames true ist. -->
+    <section class="section" id="projekte" data-theme="dark" data-section="projekte" data-reveal>
       <div class="band">
         <div class="section-header">
           <h2 class="t-section" data-reveal-item>Projekte.</h2>
+          <div class="section-header__links" data-reveal-item>
+            <a class="link link--chevron" href="#konfigurator" data-track="cta-projekte-konfigurator">Dein Projekt starten</a>
+          </div>
         </div>
-      </div>
-      <div class="gallery-wrap" data-gallery data-reveal-item>
-        <button class="gallery__arrow gallery__arrow--prev" type="button" aria-label="Vorherige Projekte" data-gallery-prev><svg aria-hidden="true"><use href="#i-prev"/></svg></button>
-        <ul class="gallery" tabindex="0" aria-label="Projekte, horizontal scrollbar" data-projects>
-          <li class="project">
-            <div class="project__media"><mark class="ph">[PROJEKT 1 · Screenshot 16:10]</mark></div>
-            <h3 class="t-card"><mark class="ph">[Kundenname]</mark></h3>
-            <p><mark class="ph">[Branche · Leistung]</mark></p>
+        <ul class="folders" aria-label="Projekte" data-folders>
+          <li class="folders__fallback">
+            <h3 class="t-card">Projekt 1</h3>
           </li>
-          <li class="project">
-            <div class="project__media"><mark class="ph">[PROJEKT 2 · Screenshot 16:10]</mark></div>
-            <h3 class="t-card"><mark class="ph">[Kundenname]</mark></h3>
-            <p><mark class="ph">[Branche · Leistung]</mark></p>
+          <li class="folders__fallback">
+            <h3 class="t-card">Projekt 2</h3>
           </li>
-          <li class="project">
-            <div class="project__media"><mark class="ph">[PROJEKT 3 · Screenshot 16:10]</mark></div>
-            <h3 class="t-card"><mark class="ph">[Kundenname]</mark></h3>
-            <p><mark class="ph">[Branche · Leistung]</mark></p>
+          <li class="folders__fallback">
+            <h3 class="t-card">Projekt 3</h3>
           </li>
         </ul>
-        <button class="gallery__arrow gallery__arrow--next" type="button" aria-label="Weitere Projekte" data-gallery-next><svg aria-hidden="true"><use href="#i-next"/></svg></button>
+        <p class="folders__hint t-body-s" aria-hidden="true">Klick auf einen Ordner, um ihn zu öffnen, und auf eine Datei, um sie anzusehen.</p>
       </div>
     </section>
 
@@ -288,8 +283,8 @@
             </div>
             <div class="stat" data-reveal-item>
               <dt class="stat__eyebrow">JavaScript gesamt</dt>
-              <dd class="stat__value">23&nbsp;KB</dd>
-              <dd class="stat__label">Für Navigation, Animation, 3D, Glas-Button und Konfigurator zusammen.<sup class="fn"><a href="#fn-3" id="fnref-3" aria-label="Fußnote 3">3</a></sup></dd>
+              <dd class="stat__value">34&nbsp;KB</dd>
+              <dd class="stat__label">Für Navigation, Animation, 3D, Glas-Button, Projektordner und Konfigurator zusammen.<sup class="fn"><a href="#fn-3" id="fnref-3" aria-label="Fußnote 3">3</a></sup></dd>
             </div>
             <div class="stat" data-reveal-item>
               <dt class="stat__eyebrow">3D-Modell</dt>
@@ -482,7 +477,7 @@
             <ul class="index__main">
               <li><a href="#leistungen">Leistungen</a></li>
               <li><a href="#material">3D zum Anfassen</a></li>
-              <li data-requires="projects"><a href="#projekte">Projekte</a></li>
+              <li><a href="#projekte">Projekte</a></li>
               <li><a href="#ablauf">Ablauf</a></li>
             </ul>
           </div>
@@ -517,7 +512,7 @@
         <ol class="footnotes">
           <li id="fn-1"><a href="#fnref-1" aria-label="Zurück zum Text, Fußnote 1">1.</a><span>Geprüft am 14.11.2026 im Netzwerk-Protokoll des Browsers: Alle Dateien dieser Seite, auch die Schrift, werden von derselben Adresse geladen wie die Seite selbst.</span></li>
           <li id="fn-2"><a href="#fnref-2" aria-label="Zurück zum Text, Fußnote 2">2.</a><span>Geprüft am 14.11.2026: Die Seite setzt keine Cookies und nutzt weder localStorage noch sessionStorage.</span></li>
-          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der fünf JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Unkomprimiert 61&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 17.11.2026.</span></li>
+          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der sechs JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Unkomprimiert 90&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 17.11.2026.</span></li>
           <li id="fn-4"><a href="#fnref-4" aria-label="Zurück zum Text, Fußnote 4">4.</a><span>Geometrie-Daten des Logos, mit gzip (Stufe 9) komprimiert. Unkomprimiert 760&nbsp;KB. Der Server komprimiert etwas schwächer und überträgt rund 178&nbsp;KB. Gemessen am 14.11.2026.</span></li>
           <li id="fn-5"><a href="#fnref-5" aria-label="Zurück zum Text, Fußnote 5">5.</a><span>Der Richtpreis ist unverbindlich und ersetzt kein Angebot. Er ergibt sich aus Projektart, Ausgangslage, Umfang und Extras.<span data-requires="pricing.vatNote"> <span data-config="pricing.vatNote"><mark class="ph">[Hinweis netto/brutto]</mark></span></span></span></li>
         </ol>
