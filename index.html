@@ -111,16 +111,21 @@
   <main id="inhalt">
 
     <!-- 1 · Hero -->
-    <section class="hero" id="top" data-theme="dark" data-section="hero">
-      <div class="stage" data-glass-hero>
+    <!-- Beim Scrollen bleibt der Hero stehen: Das Glas-Logo rückt nach oben, darunter erscheint der Claim (main.js, initHeroScroll).
+         Ohne JavaScript oder bei reduzierter Bewegung steht der Claim einfach zwischen Logo und Button. -->
+    <section class="hero" id="top" data-theme="dark" data-section="hero" data-hero-scroll>
+      <div class="hero__pin">
+      <div class="stage" data-glass-hero></div>
+      <!-- Platz des Glas-Logos: Lage und Größe kommen aus CSS (.hero__glass, --glass-max), glass-reveal.js folgt ihm -->
+      <div class="hero__glass" data-glass-anchor>
         <svg class="stage__mark" viewBox="0 0 608.5 268.5" role="img" aria-label="Das Websign Logo: die Buchstaben W und S als eine durchgehende Form"><use href="#ws-mark"/></svg>
       </div>
+      <div class="hero__claim" data-hero-claim>
+        <p class="t-eyebrow-l t-grad">Websign</p>
+        <h1 class="t-hero t-grad">Websites mit Tiefe.</h1>
+        <p class="t-subhead">Webdesign, Branding und 3D aus einem Studio. Für Marken, die im Kopf bleiben wollen.</p>
+      </div>
       <div class="band hero__content" data-reveal>
-        <div class="hero__text">
-          <p class="t-eyebrow-l" data-reveal-item>Websign</p>
-          <h1 class="t-hero" data-reveal-item>Websites mit Tiefe.</h1>
-          <p class="t-subhead" data-reveal-item>Webdesign, Branding und 3D aus einem Studio. Für Marken, die im Kopf bleiben wollen.</p>
-        </div>
         <p class="hero__cta" data-reveal-item>
           <a class="lg lg--xl" href="#konfigurator" data-track="cta-hero-konfigurator">Projekt konfigurieren</a>
         </p>
@@ -128,6 +133,7 @@
           <span data-requires="pricing.types">Dein Richtpreis in fünf Schritten.</span><span data-requires-not="pricing.types">Dein Projekt in fünf Schritten.</span>
           <a class="link link--chevron" href="#leistungen" data-track="cta-hero-leistungen">Leistungen ansehen</a>
         </p>
+      </div>
       </div>
     </section>
 
@@ -283,7 +289,7 @@
             </div>
             <div class="stat" data-reveal-item>
               <dt class="stat__eyebrow">JavaScript gesamt</dt>
-              <dd class="stat__value">45&nbsp;KB</dd>
+              <dd class="stat__value">46&nbsp;KB</dd>
               <dd class="stat__label">Für Navigation, Animation, 3D, Glas-Logo, Glas-Button, Projektordner und Konfigurator zusammen.<sup class="fn"><a href="#fn-3" id="fnref-3" aria-label="Fußnote 3">3</a></sup></dd>
             </div>
             <div class="stat" data-reveal-item>
@@ -512,7 +518,7 @@
         <ol class="footnotes">
           <li id="fn-1"><a href="#fnref-1" aria-label="Zurück zum Text, Fußnote 1">1.</a><span>Geprüft am 14.11.2026 im Netzwerk-Protokoll des Browsers: Alle Dateien dieser Seite, auch die Schrift, werden von derselben Adresse geladen wie die Seite selbst.</span></li>
           <li id="fn-2"><a href="#fnref-2" aria-label="Zurück zum Text, Fußnote 2">2.</a><span>Geprüft am 14.11.2026: Die Seite setzt keine Cookies und nutzt weder localStorage noch sessionStorage.</span></li>
-          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der sieben JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Unkomprimiert 121&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 18.11.2026.</span></li>
+          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der sieben JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Unkomprimiert 125&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 18.11.2026.</span></li>
           <li id="fn-4"><a href="#fnref-4" aria-label="Zurück zum Text, Fußnote 4">4.</a><span>Geometrie-Daten des Logos, mit gzip (Stufe 9) komprimiert. Unkomprimiert 760&nbsp;KB. Mit der schwächeren Stufe&nbsp;6, die viele Server nutzen, sind es rund 175&nbsp;KB. Gemessen am 17.11.2026.</span></li>
           <li id="fn-5"><a href="#fnref-5" aria-label="Zurück zum Text, Fußnote 5">5.</a><span>Der Richtpreis ist unverbindlich und ersetzt kein Angebot. Er ergibt sich aus Projektart, Ausgangslage, Umfang und Extras.<span data-requires="pricing.vatNote"> <span data-config="pricing.vatNote"><mark class="ph">[Hinweis netto/brutto]</mark></span></span></span></li>
         </ol>

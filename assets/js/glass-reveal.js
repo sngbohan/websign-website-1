@@ -579,16 +579,17 @@ async function createRenderer(canvas) {
 
 // ---------------------------------------------------------------------------
 /**
- * Startet die Glas-Enthüllung in der Bühne [data-glass-hero]. Die Kachel sitzt mittig zwischen
- * Navigation und Hero-Text. Das SVG-Zeichen bleibt sichtbar, bis das Glas bereit ist, und kommt zurück,
+ * Startet die Glas-Enthüllung: Leinwand in [data-glass-hero], die Kachel sitzt mittig im Platz
+ * [data-glass-anchor]. Das SVG-Zeichen bleibt sichtbar, bis das Glas bereit ist, und kommt zurück,
  * falls der WebGL-Kontext verloren geht. Ein Klick auf die Kachel startet die Enthüllung neu.
  */
 export async function initGlassReveal(track = () => {}) {
-  const stage = document.querySelector('[data-glass-hero]');
-  const mark = stage && stage.querySelector('.stage__mark');
+  const stage = document.querySelector('[data-glass-hero]');      // Leinwand über den ganzen Hero
+  const anchor = document.querySelector('[data-glass-anchor]');   // Platz der Kachel, aus CSS
+  const mark = anchor && anchor.querySelector('.stage__mark');
   const path = document.querySelector('#ws-mark path');
   const symbol = document.getElementById('ws-mark');
-  if (!stage || !mark || !path || !symbol) return;
+  if (!stage || !anchor || !mark || !path || !symbol) return;
   if (navigator.connection && navigator.connection.saveData) return;
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -616,29 +617,32 @@ export async function initGlassReveal(track = () => {}) {
     renderer.setLogo(await buildSdf(tex));
   } catch (err) { console.error('[Websign Glas-Logo]', err); return; }
 
-  const nav = document.querySelector('[data-nav]');
-  const text = section.querySelector('.hero__content');
   const end = endOf(P);
   let time = reduceMotion ? 1.4 : 0;   // bei reduzierter Bewegung: ein Standbild mit Glas
   let playing = !reduceMotion, pauseLeft = 0, outro = 0;
   let started = false, visible = false, lost = false, dirty = true, raf = 0, last = 0;
-  let geo = { w: 1, h: 1, cx: 0, cy: 0, tile: 1, rect: null };
+  let geo = { w: 1, h: 1, cx: 0, cy: 0, tile: 1, local: null };
 
-  // Die Kachel füllt die Lücke zwischen Navigation und Text; links und rechts bleibt Luft.
+  // Die Kachel füllt den Platz .hero__glass: so groß wie er hoch ist, höchstens --glass-max und 88 % der Breite.
+  // Gemessen wird mit Layout-Werten (offset…), nicht mit getBoundingClientRect: Die Scroll-Szene verschiebt und
+  // verkleinert Leinwand und Platz per transform, das soll die Rechnung nicht verfälschen.
   function measure() {
     const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
-    const sr = stage.getBoundingClientRect();
-    const cw = Math.max(1, sr.width), ch = Math.max(1, sr.height);
-    const top = (nav ? nav.getBoundingClientRect().bottom : sr.top) + 20;
-    // offsetTop statt getBoundingClientRect: der Text gleitet beim Laden noch herein (transform)
-    const bottom = (text ? section.getBoundingClientRect().top + text.offsetTop : sr.bottom) - 28;
-    const cy = (top + bottom) / 2;
-    const tileCss = Math.max(140, Math.min(bottom - top, cw * 0.62, 460));
-    const w = Math.round(cw * dpr), h = Math.round(ch * dpr);
+    const sw = Math.max(1, stage.clientWidth), sh = Math.max(1, stage.clientHeight);
+    const cs = getComputedStyle(anchor);
+    const padT = parseFloat(cs.paddingTop) || 0, padB = parseFloat(cs.paddingBottom) || 0;
+    const room = Math.max(0, anchor.offsetHeight - padT - padB);
+    const max = parseFloat(cs.getPropertyValue('--glass-max')) || 520;
+    // Die Kachel wächst beim Halten um drift (bis 12 %): so viel Luft bleibt im Platz frei
+    const tileCss = Math.max(120, Math.min(room, anchor.offsetWidth * 0.88, max) / (1 + P.drift));
+    const cx = anchor.offsetLeft - stage.offsetLeft + anchor.offsetWidth / 2;
+    const cy = anchor.offsetTop - stage.offsetTop + padT + room / 2;
+    anchor.style.setProperty('--glass-tile', `${tileCss}px`);
+    const w = Math.round(sw * dpr), h = Math.round(sh * dpr);
     if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
-    geo = { w, h, cx: (sr.width / 2) * dpr, cy: (sr.bottom - cy) * dpr, tile: tileCss * dpr,
-      rect: { x0: sr.left + cw / 2 - tileCss / 2, x1: sr.left + cw / 2 + tileCss / 2, y0: cy - tileCss / 2, y1: cy + tileCss / 2 } };
+    geo = { w, h, cx: cx * dpr, cy: (sh - cy) * dpr, tile: tileCss * dpr, local: { cx, cy, half: tileCss / 2 } };
     dirty = true;
+    stage.dispatchEvent(new CustomEvent('ws:glass-measure', { bubbles: true }));
   }
 
   function tick(now) {
@@ -672,7 +676,7 @@ export async function initGlassReveal(track = () => {}) {
     started = true;
     stage.appendChild(canvas);
     measure();
-    requestAnimationFrame(() => stage.classList.add('is-live'));   // Standbild blendet aus, das Glas ein
+    requestAnimationFrame(() => { stage.classList.add('is-live'); anchor.classList.add('is-live'); });   // Standbild aus, Glas ein
     kick();
   }
 
@@ -682,13 +686,20 @@ export async function initGlassReveal(track = () => {}) {
     else if (visible) kick();
     else if (raf) { cancelAnimationFrame(raf); raf = 0; last = 0; }
   }).observe(stage);
-  if ('ResizeObserver' in window) new ResizeObserver(() => { if (started) { measure(); kick(); } }).observe(stage);
+  if ('ResizeObserver' in window) { const ro = new ResizeObserver(() => { if (started) { measure(); kick(); } }); ro.observe(stage); ro.observe(anchor); }
   document.addEventListener('visibilitychange', () => { last = 0; kick(); });
 
   // Klick auf die Kachel: von vorn
-  const onTile = (e) => { const r = geo.rect; return !!r && e.clientX >= r.x0 && e.clientX <= r.x1 && e.clientY >= r.y0 && e.clientY <= r.y1; };
-  stage.addEventListener('pointermove', (e) => { stage.style.cursor = started && !lost && !reduceMotion && onTile(e) ? 'pointer' : ''; });
-  stage.addEventListener('click', (e) => {
+  // Nur oben auf der Seite (vor der Scroll-Szene) ist die Kachel unverschoben und anklickbar
+  const onTile = (e) => {
+    const l = geo.local;
+    if (!l || window.scrollY > 24) return false;
+    const r = stage.getBoundingClientRect();
+    return Math.abs(e.clientX - r.left - l.cx) <= l.half && Math.abs(e.clientY - r.top - l.cy) <= l.half;
+  };
+  section.addEventListener('pointermove', (e) => { section.style.cursor = started && !lost && !reduceMotion && onTile(e) ? 'pointer' : ''; });
+  section.addEventListener('click', (e) => {
+    if (e.target.closest('a, button')) return;
     if (!started || lost || reduceMotion || !onTile(e)) return;
     time = 0; playing = true; pauseLeft = 0; outro = 0; dirty = true; last = 0;
     track('hero-glass-replay');
@@ -698,6 +709,6 @@ export async function initGlassReveal(track = () => {}) {
   canvas.addEventListener('webglcontextlost', (e) => {
     e.preventDefault();
     lost = true;
-    stage.classList.remove('is-live');   // das SVG-Zeichen übernimmt wieder
+    stage.classList.remove('is-live'); anchor.classList.remove('is-live');   // das SVG-Zeichen übernimmt wieder
   });
 }

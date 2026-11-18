@@ -67,6 +67,58 @@ function fillConfig() {
 
 }
 
+// ---------- Hero: Beim Scrollen rückt das Glas-Logo nach oben, der Claim erscheint ----------
+// Der Hero ist höher als der Bildschirm, .hero__pin bleibt stehen. --hp-move schiebt und verkleinert das Logo,
+// --t lässt den Claim Zeile für Zeile aus der Unschärfe erscheinen. Ohne JS oder bei reduzierter Bewegung
+// bleibt alles statisch: Der Claim steht dann zwischen Logo und Button.
+function initHeroScroll() {
+  const hero = $('[data-hero-scroll]');
+  if (!hero || reduced) return;
+  const pin = $('.hero__pin', hero), anchor = $('[data-glass-anchor]', hero), stage = $('[data-glass-hero]', hero);
+  const claim = $('[data-hero-claim]', hero), cta = $('.hero__content', hero), nav = $('[data-nav]');
+  if (!pin || !anchor || !stage || !claim || !cta) return;
+
+  hero.classList.add('hero--scroll');
+
+  const ease = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const GROW = 1.12;   // die Glaskachel wächst beim Halten um bis zu 12 %
+  let run = 1;
+  // Endlage: Kachel und Claim als Gruppe mittig zwischen Navigation und Button
+  const layout = () => {
+    const cs = getComputedStyle(anchor);
+    const padT = parseFloat(cs.paddingTop) || 0, padB = parseFloat(cs.paddingBottom) || 0;
+    const room = anchor.offsetHeight - padT - padB;
+    const max = parseFloat(cs.getPropertyValue('--glass-max')) || 520;
+    const tile = parseFloat(anchor.style.getPropertyValue('--glass-tile')) || Math.min(room, anchor.offsetWidth * 0.88, max) / GROW;
+    const cy0 = anchor.offsetTop + padT + room / 2;
+    const top = (nav ? nav.offsetHeight : 48) + 16, bottom = cta.offsetTop - 28;
+    const gap = 20, ch = claim.offsetHeight;
+    const tile1 = Math.min(tile, Math.max(100, (bottom - top - gap - ch) / GROW));
+    const gTop = top + Math.max(0, (bottom - top - (tile1 * GROW + gap + ch)) / 2);
+    const cy1 = gTop + (tile1 * GROW) / 2;
+    hero.style.setProperty('--glass-dy', `${(cy1 - cy0).toFixed(1)}px`);
+    hero.style.setProperty('--glass-s', (tile1 / tile).toFixed(4));
+    stage.style.setProperty('--glass-oy', `${cy0.toFixed(1)}px`);
+    anchor.style.setProperty('--glass-oy', `${(cy0 - anchor.offsetTop).toFixed(1)}px`);
+    claim.style.setProperty('--claim-top', `${(gTop + tile1 * GROW + gap).toFixed(1)}px`);
+    run = Math.max(1, hero.offsetHeight - pin.offsetHeight);
+  };
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const p = clamp(-hero.getBoundingClientRect().top / run, 0, 1);
+    hero.style.setProperty('--hp-move', ease(0, 0.5, p).toFixed(4));
+    claim.style.setProperty('--t', clamp((p - 0.3) / 0.62, 0, 1).toFixed(4));   // erst wenn das Logo Platz gemacht hat
+  };
+  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  const relayout = () => { layout(); onScroll(); };
+  layout(); update();
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', relayout);
+  hero.addEventListener('ws:glass-measure', relayout);   // glass-reveal.js hat die Kachelgröße neu bestimmt
+  if (document.fonts) document.fonts.ready.then(relayout);
+}
+
 // ---------- Reveal: ein Standard für alle Sektionen ----------
 function initReveal() {
   const groups = $$('[data-reveal]');
@@ -220,6 +272,7 @@ function initScene() {
 applyRequires();
 fillConfig();
 initReveal();
+initHeroScroll();
 initNav();
 initModals();
 initGalleries();

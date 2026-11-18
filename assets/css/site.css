@@ -168,18 +168,43 @@ p + p { margin-top: 0.8em; }
 .stage.is-live .stage__mark { opacity: 0; }
 
 /* ---------- Hero ---------- */
-.hero {
+/* .hero__pin ist der sichtbare Bildschirm. In der Scroll-Szene (.hero--scroll, main.js) ist der Hero höher
+   und .hero__pin bleibt stehen, während --hp-move (Logo) und --t (Claim) von 0 auf 1 laufen. */
+.hero { position: relative; overflow: clip; background: var(--surface); color: var(--text-primary); --glass-max: 860px; }
+.hero__pin {
   position: relative; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;
   min-height: max(100vh, 600px); min-height: max(100svh, 600px);
-  padding: calc(var(--nav-height) + 24px) 0 56px; background: var(--surface); color: var(--text-primary);
+  padding: calc(var(--nav-height) + 24px) 0 56px;
 }
-.hero .stage__mark { position: absolute; left: 50%; top: 33%; width: min(52%, 780px, 60vh); height: auto; transform: translate(-50%, -50%); }
+/* Glas-Logo (glass-reveal.js): .hero__glass ist der Platz der Kachel. Sie ist so groß wie der Platz hoch ist,
+   höchstens --glass-max und 88 % der Breite. Das SVG-Zeichen steht dort, wo das Logo am Ende jeder Runde steht. */
+.hero__glass { flex: 1 1 auto; min-height: 260px; display: grid; place-items: center; padding-block: 4px 12px; }
+.hero__glass .stage__mark { width: calc(var(--glass-tile, 420px) * 0.46); max-width: 80%; height: auto; }
+.hero__glass.is-live .stage__mark { opacity: 0; }
 /* Lichtschein unter dem Logo: gibt dem Glas-Button etwas zu brechen */
-.hero::after { content: ""; position: absolute; left: 50%; bottom: -8%; width: min(1100px, 92%); height: 62%; transform: translateX(-50%); pointer-events: none;
+.hero__pin::after { content: ""; position: absolute; left: 50%; bottom: -8%; width: min(1100px, 92%); height: 62%; transform: translateX(-50%); pointer-events: none;
   background: var(--glow-brand); }
+/* Claim: ohne Scroll-Szene einfach zwischen Logo und Button */
+.hero__claim { position: relative; z-index: 1; width: var(--band); margin: 0 auto 8px; text-align: center; }
+.hero__claim .t-hero { margin-top: 0.08em; }
+.hero__claim .t-subhead { color: var(--brand-text); max-width: 560px; margin-inline: auto; }   /* Verlauf nur ab Headline-Größe, darunter einfarbig */
+
+/* Scroll-Szene */
+.hero--scroll { height: calc(max(100svh, 600px) + 110vh); }
+.hero--scroll .hero__pin { position: sticky; top: 0; height: max(100svh, 600px); }
+.hero--scroll .hero__claim { position: absolute; left: 0; right: 0; top: var(--claim-top, 50%); margin-bottom: 0; }
+.hero--scroll [data-glass-hero], .hero--scroll .hero__glass {
+  transform: translateY(calc(var(--glass-dy, 0px) * var(--hp-move, 0))) scale(calc(1 - (1 - var(--glass-s, 1)) * var(--hp-move, 0)));
+  transform-origin: 50% var(--glass-oy, 50%);
+}
+/* Claim: Zeile für Zeile aus der Unschärfe nach oben, gesteuert von --t */
+.hero--scroll .hero__claim > * {
+  --o: clamp(0, (var(--t, 0) - var(--d, 0)) / 0.42, 1);
+  opacity: var(--o); transform: translateY(calc((1 - var(--o)) * 36px)); filter: blur(calc((1 - var(--o)) * 14px));
+}
+.hero--scroll .hero__claim > :nth-child(2) { --d: 0.16; }
+.hero--scroll .hero__claim > :nth-child(3) { --d: 0.38; }
 .hero__content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0; }
-.hero__text { max-width: 860px; }
-.hero__text .t-subhead { color: var(--text-secondary); max-width: 560px; margin-inline: auto; }
 .hero__cta { margin-top: 32px; }
 .hero__meta { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 24px; color: var(--text-secondary); font-size: var(--body-s-size); line-height: var(--body-s-line); letter-spacing: var(--body-s-track); }
 .hero__meta .link { font-size: var(--body-size); }
@@ -551,8 +576,7 @@ p + p { margin-top: 0.8em; }
   .btn { font-size: var(--body-s-size); min-height: var(--hit); }
   .btn--nav { font-size: var(--caption-size); min-height: 30px; }
 
-  .hero { padding-bottom: 32px; }
-  .hero .stage__mark { top: 27%; width: 80%; }
+  .hero__pin { padding-bottom: 32px; }
   .hero__cta { margin-top: 24px; }
   .lg--xl { min-height: 60px; padding: 0 30px; font-size: var(--intro-size); }
   .price-pill { width: 100%; justify-content: space-between; }
