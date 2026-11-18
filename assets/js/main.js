@@ -108,7 +108,9 @@ function initHeroScroll() {
     ticking = false;
     const p = clamp(-hero.getBoundingClientRect().top / run, 0, 1);
     hero.style.setProperty('--hp-move', ease(0, 0.5, p).toFixed(4));
-    claim.style.setProperty('--t', clamp((p - 0.3) / 0.62, 0, 1).toFixed(4));   // erst wenn das Logo Platz gemacht hat
+    const t = clamp((p - 0.3) / 0.62, 0, 1);
+    claim.style.setProperty('--t', t.toFixed(4));   // erst wenn das Logo Platz gemacht hat
+    if (t > 0.97 !== claim.classList.contains('is-shown')) claim.classList.toggle('is-shown', t > 0.97);   // Lichtstreifen (site.css)
   };
   const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
   const relayout = () => { layout(); onScroll(); };
@@ -132,6 +134,75 @@ function initReveal() {
     }
   }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
   groups.forEach((g) => io.observe(g));
+}
+
+// ---------- Text-Fokus: Schrift erscheint aus der Unschärfe (Blur-In) ----------
+// Die Typo-Rolle bestimmt die Art: große Headlines Zeichen für Zeichen, Karten-Titel und Intros Wort für Wort,
+// Eyebrows ziehen sich zur Mitte zusammen, Zahlen springen aus der Tiefe. Gestartet wird, wo das Element steht:
+// in Reveal-Gruppen mit dem Reveal, in der Leistungs-Szene bei jedem Beat neu, in Modals beim Öffnen, im Hero
+// mit dem Scrollen (--t). Screenreader lesen den Originaltext (sr-only), die Einzelteile sind aria-hidden.
+// Bei reduzierter Bewegung und ohne JavaScript bleibt der Text unverändert.
+const FX = [
+  ['.stat__value, .step-card__num', 'c', 'pop'],
+  ['.t-hero, .t-eyebrow-l, .t-statement, .t-headline-xl, .t-section, .t-headline-l', 'c', 'focus'],
+  ['.t-eyebrow, .modal__eyebrow, .fcard__label, .audience__card .t-body-s', 'c', 'gather'],
+  ['.t-card, .t-headline-s, .hero__claim .t-subhead, .lockup .t-subhead', 'w', 'rise'],
+  ['.t-intro', 'w', 'soft'],
+];
+const BLUE = '.t-grad, .hero__claim .t-subhead';   // blaue Texte bekommen zusätzlich den Lichtstreifen
+function initTextFx() {
+  if (reduced) return;
+  const grads = [];
+  const io = 'IntersectionObserver' in window && new IntersectionObserver((entries) => {
+    for (const en of entries) if (en.isIntersecting) { en.target.classList.add('fx-on'); io.unobserve(en.target); }
+  }, { rootMargin: '0px 0px -8% 0px' });
+  const span = (cls, text) => { const s = document.createElement('span'); s.className = cls; if (text != null) s.textContent = text; return s; };
+
+  for (const [sel, mode, style] of FX) {
+    for (const el of $$(sel)) {
+      if (el.classList.contains('fx') || !el.closest('[data-section], dialog.modal') || el.closest('.sr-only, .menu, .summary, .folders')) continue;
+      const units = [];
+      const walk = (node) => {
+        for (const child of [...node.childNodes]) {
+          if (child.nodeType === 1) { if (!child.matches('sup, .sr-only, [hidden]')) walk(child); continue; }
+          if (child.nodeType !== 3 || !child.data.trim()) continue;
+          const vis = span('fx-line');
+          vis.setAttribute('aria-hidden', 'true');
+          for (const part of child.data.split(/([ \t\r\n]+)/)) {     // geschütztes Leerzeichen bleibt im Wort
+            if (!part) continue;
+            if (!part.trim()) { vis.append(' '); continue; }
+            if (mode === 'w') { const w = span('fx-w fx-c', part); units.push(w); vis.append(w); continue; }
+            const w = span('fx-w');
+            for (const ch of part) { const c = span('fx-c', ch); units.push(c); w.append(c); }
+            vis.append(w);
+          }
+          child.replaceWith(span('sr-only', child.data), vis);
+        }
+      };
+      walk(el);
+      const n = units.length;
+      if (!n) continue;
+      units.forEach((u, i) => { u.style.setProperty('--ci', i); if (style === 'gather') u.style.setProperty('--fx-o', (i - (n - 1) / 2).toFixed(1)); });
+      const spread = mode === 'w' ? (style === 'soft' ? 1100 : 700) : 1000;   // so lange braucht die ganze Zeile höchstens
+      el.style.setProperty('--fx-step', `${Math.min(mode === 'w' ? 110 : 70, spread / n).toFixed(1)}ms`);
+      el.style.setProperty('--fx-sstep', Math.min(0.022, 0.26 / n).toFixed(4));
+      el.style.setProperty('--fx-n', n);
+      el.classList.add('fx', `fx--${style}`);
+      if (el.matches(BLUE)) { el.classList.add('fx--shine'); grads.push(el); }
+      if (!el.closest('[data-reveal]')) { if (io) io.observe(el); else el.classList.add('fx-on'); }
+    }
+  }
+
+  // Blaue Texte: Jedes Zeichen bekommt Farbe und Lichtstreifen der ganzen Zeile, verschoben um seine eigene Lage
+  if (!grads.length) return;
+  const paint = () => grads.forEach((el) => {
+    el.style.setProperty('--fx-gw', `${el.offsetWidth}px`);
+    el.style.setProperty('--fx-gh', `${el.offsetHeight}px`);
+    $$('.fx-c', el).forEach((c) => { c.style.setProperty('--fx-x', `${-c.offsetLeft}px`); c.style.setProperty('--fx-y', `${-c.offsetTop}px`); });
+  });
+  paint();
+  if ('ResizeObserver' in window) { const ro = new ResizeObserver(paint); grads.forEach((el) => ro.observe(el)); }
+  if (document.fonts) document.fonts.ready.then(paint);
 }
 
 // ---------- Sichtbarkeit je Sektion melden ----------
@@ -271,6 +342,7 @@ function initScene() {
 // ---------- Start ----------
 applyRequires();
 fillConfig();
+initTextFx();
 initReveal();
 initHeroScroll();
 initNav();

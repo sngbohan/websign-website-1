@@ -557,6 +557,72 @@ p + p { margin-top: 0.8em; }
    und ein Element mit opacity 0 zählt erst, wenn es einblendet. Das kostete mobil rund 1 s LCP. */
 .js .hero [data-reveal-item] { opacity: 1; transition-property: transform; }
 
+/* ---------- Text-Fokus (main.js, initTextFx): Schrift erscheint aus der Unschärfe ----------
+   Jede Rolle hat ihre Art. --ci ist die Nummer des Zeichens oder Worts, --fx-step der Abstand dazwischen. */
+.fx { --fx-blur: 22px; --fx-scale: 1.18; --fx-y: 0em; --fx-dur: 1400ms; }
+.fx--pop { --fx-blur: 30px; --fx-scale: 1.7; --fx-dur: 1600ms; }
+.fx--gather { --fx-blur: 12px; --fx-scale: 1; --fx-spread: 0.24em; --fx-dur: 1250ms; }
+.fx--rise { --fx-blur: 16px; --fx-scale: 1; --fx-y: 0.45em; --fx-dur: 1200ms; }
+.fx--soft { --fx-blur: 14px; --fx-scale: 1; --fx-y: 0.2em; --fx-dur: 1400ms; }
+.fx-w { display: inline-block; white-space: nowrap; }
+.fx-c { display: inline-block; white-space: pre; }
+@keyframes fx-in {
+  from {
+    opacity: 0; filter: blur(var(--fx-blur));
+    transform: translate(calc(var(--fx-o, 0) * var(--fx-spread, 0em)), var(--fx-y)) scale(var(--fx-scale));
+  }
+}
+.js .fx .fx-c { opacity: 0; }
+.js .fx.fx-on .fx-c, .js [data-reveal].is-revealed .fx .fx-c {
+  opacity: 1;
+  animation: fx-in var(--fx-dur) var(--ease-ws) backwards;
+  animation-delay: calc(var(--i, 0) * var(--reveal-stagger) * 3 + var(--ci, 0) * var(--fx-step, 60ms));
+}
+/* Die Elemente selbst blenden nicht zusätzlich ein, das übernehmen ihre Zeichen */
+.js [data-reveal] [data-reveal-item].fx { opacity: 1; transform: none; }
+/* Leistungs-Szene: Jeder Beat stellt seine Schrift beim Aktivwerden neu scharf */
+.js .beat:not(.is-active) .fx .fx-c { animation: none; }
+/* Blaue Texte (Verlauf und Hero-Untertitel): Lichtstreifen (Spotlight), sobald die Schrift scharf ist.
+   Farbe und Licht sitzen auf jedem Zeichen. main.js setzt Breite/Höhe der Zeile (--fx-gw, --fx-gh) und die
+   Lage jedes Zeichens darin (--fx-x, --fx-y), damit Verlauf und Streifen über die ganze Zeile durchlaufen.
+   --sweep läuft von 0 (Streifen links vor dem Text) bis 1 (rechts dahinter). */
+@property --sweep { syntax: "<number>"; inherits: true; initial-value: 0; }
+.fx--shine {
+  position: relative;
+  --fx-base: linear-gradient(var(--brand-text), var(--brand-text));
+  --fx-light: rgba(255, 255, 255, 0.95);
+}
+.fx--shine.t-grad { --fx-base: var(--grad-brand-text); }
+[data-theme="light"] .fx--shine { --fx-light: #9fbaf0; }
+@keyframes fx-shine { 0% { --sweep: 0; } 28%, 100% { --sweep: 1; } }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .fx--shine { background-image: none; }
+  .fx--shine .fx-c {
+    background-image: linear-gradient(100deg, transparent 38%, var(--fx-light) 50%, transparent 62%), var(--fx-base);
+    background-size: calc(var(--fx-gw, 0px) * 2) var(--fx-gh, 100%), var(--fx-gw, 100%) var(--fx-gh, 100%);
+    background-position: calc(var(--fx-x, 0px) + var(--fx-gw, 0px) * (var(--sweep) * 1.6 - 1.3)) var(--fx-y, 0px), var(--fx-x, 0px) var(--fx-y, 0px);
+    background-repeat: no-repeat;
+    -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+    padding-bottom: 0.08em; margin-bottom: -0.08em;
+  }
+}
+/* Start: wenn das letzte Zeichen scharf ist, dann alle 7 Sekunden wieder (2 s Streifen, 5 s Pause) */
+.js .fx--shine.fx-on, .js [data-reveal].is-revealed .fx--shine {
+  animation: fx-shine 7s linear infinite;
+  animation-delay: calc(var(--i, 0) * var(--reveal-stagger) * 3 + var(--fx-n, 0) * var(--fx-step, 60ms) + var(--fx-dur));
+}
+/* Hero: Die Zeichen folgen dem Scrollen statt einer Zeit. --t kommt von initHeroScroll, --d ist die Verzögerung der Zeile. */
+.js .hero--scroll .hero__claim > .fx { opacity: 1; transform: none; filter: none; }
+.js .hero--scroll .hero__claim .fx .fx-c {
+  --co: clamp(0, (var(--t, 0) - var(--d, 0) - var(--ci, 0) * var(--fx-sstep, 0.02)) / 0.36, 1);
+  animation: none; opacity: var(--co);
+  filter: blur(calc((1 - var(--co)) * var(--fx-blur)));
+  transform: translateY(calc((1 - var(--co)) * var(--fx-y))) scale(calc(var(--fx-scale) - (var(--fx-scale) - 1) * var(--co)));
+}
+/* Im Hero startet das Licht erst, wenn der Claim ganz da ist (.is-shown von initHeroScroll), Zeile für Zeile versetzt */
+.js .hero--scroll .hero__claim .fx--shine { animation: none; }
+.js .hero--scroll .hero__claim.is-shown .fx--shine { animation: fx-shine 7s linear infinite; animation-delay: calc(var(--d, 0) * 1s); }
+
 /* ---------- M · 735–1068 px ---------- */
 @media (max-width: 1068px) {
   .fcards, .audience { grid-template-columns: 1fr; }
@@ -609,12 +675,13 @@ p + p { margin-top: 0.8em; }
   .js [data-reveal] [data-reveal-item] { opacity: 1; transform: none; }
   .fcard:hover, .project:hover .project__media { transform: none; }
   .js [data-kf], .js [data-kf-preset] { animation: none !important; opacity: 1; transform: none; }
+  .js .fx .fx-c { opacity: 1; animation: none; filter: none; transform: none; }
 }
 @media (forced-colors: active) {
   .btn, .fcard, .option__box, .summary, .step-card, .audience__card, .stat-panel, .viewer, .price-pill, .scene__tabs, .viewer__controls { border: 1px solid ButtonText; }
   .option input:checked + .option__box { outline: 3px solid Highlight; }
   .stage__mark { fill: CanvasText; }
-  .t-grad, .t-grad-accent { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
+  .t-grad, .t-grad-accent, .fx--shine .fx-c { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
   .depth-grid { display: none; }
 }
 @media print {
@@ -623,4 +690,5 @@ p + p { margin-top: 0.8em; }
   .js .scene__sticky { position: static; height: auto; }
   .js .beat { opacity: 1; visibility: visible; transform: none; }
   .js [data-reveal] [data-reveal-item] { opacity: 1; transform: none; }
+  .js .fx .fx-c { opacity: 1; animation: none; filter: none; transform: none; }
 }
