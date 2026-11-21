@@ -6,7 +6,7 @@ import { createRoot } from 'react-dom/client';
 import { GlowCard } from '@/components/ui/spotlight-card';
 
 // Farbe der leuchtenden Ränder: 'chrome' (Silber wie das Chrom-Logo) oder 'websign' (Markenblau)
-const GLOW: 'chrome' | 'websign' = 'chrome';
+const GLOW: 'chrome' | 'websign' = 'websign';
 
 const CSS_HREF = new URL('../css/glow-cards.css', import.meta.url).href;
 
