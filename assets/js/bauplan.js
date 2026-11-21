@@ -54,6 +54,10 @@ export function initBauplan(root, config) {
       dock.classList.toggle('is-on', !!seen.form && !seen.stage);
     }, { rootMargin: '-20% 0px' });
     io.observe(form); io.observe(stage);
+    // Beim Tippen (Name, E-Mail, Nachricht) weicht die Leiste, damit sie keine Felder verdeckt
+    const typing = (e) => e.target.matches('input[type="text"], input[type="email"], textarea');
+    form.addEventListener('focusin', (e) => { if (typing(e)) dock.classList.add('is-typing'); });
+    form.addEventListener('focusout', (e) => { if (typing(e)) dock.classList.remove('is-typing'); });
   }
   mini?.addEventListener('click', () => root.scrollIntoView({ behavior: document.documentElement.classList.contains('reduced-motion') ? 'auto' : 'smooth', block: 'center' }));
   viewBtn?.addEventListener('click', () => {
@@ -123,7 +127,7 @@ export function initBauplan(root, config) {
       ...s.extras.map((e, i) => [i ? '' : 'Extras', lbl(e), e.value !== 'none' && `extras.${e.value}`]),
       ['Zeitrahmen', lbl(s.time)],
     ].map(([k, v, path]) => [k, v, amt(path)]);
-    $('[data-bon-rows]', bon).replaceChildren(...rows.map(([k, v, a]) => { const r = el('div', 'bon__row'); r.append(el('dt', '', k), el('dd', '', v), el('span', 'bon__amt', a)); return r; }));
+    $('[data-bon-rows]', bon).replaceChildren(...rows.map(([k, v, a]) => { const r = el('div', 'bon__row'); r.append(el('dt', '', k), el('dd', '', v), el('dd', 'bon__amt', a)); return r; }));
     bon.classList.toggle('bon--noprice', !m.prices);
     const total = m.prices ? m.total : 'per E-Mail';
     const no = `WS-${String(hash(key) % 10000).padStart(4, '0')}`;

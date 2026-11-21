@@ -461,7 +461,13 @@ p + p { margin-top: 0.8em; }
 /* ---------- Live-Bauplan (bauplan.js) ----------
    Isometrische Bühne über der Zusammenfassung. Jede Auswahl legt Bausteine ab, der Umfang stapelt Seiten in die Tiefe,
    „Plan“ klappt die Bühne in die Draufsicht. Alles darin ist Illustration (aria-hidden). */
-.plan { margin-bottom: 28px; }
+.plan { margin-bottom: 28px; container-type: inline-size; }
+@container (max-width: 400px) {
+  /* Schmale Spalte: Werkzeuge oben rechts, Schrittleiste darunter in voller Breite */
+  .plan .plan__hud { flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+  .plan .plan__rail { order: 2; flex: 1 1 100%; gap: 3px; }
+  .plan .plan__rail span { font-size: 11px; letter-spacing: 0; text-overflow: clip; }
+}
 .plan__hud { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 12px; }
 .plan__rail { display: flex; flex: 1; gap: 4px; min-width: 0; margin: 0; padding: 0; list-style: none; }
 .plan__rail li { flex: 1; min-width: 0; }
@@ -494,7 +500,8 @@ p + p { margin-top: 0.8em; }
   box-shadow: inset 0 0 0 1px var(--line-soft);
 }
 .plan__meta {
-  position: absolute; z-index: 2; color: var(--text-tertiary); font-size: 11px; line-height: 1; letter-spacing: 0.1em; text-transform: uppercase;
+  position: absolute; z-index: 5; padding: 4px 6px; margin: -4px -6px; border-radius: 6px; background: rgba(243, 245, 249, 0.86);
+  color: var(--text-tertiary); font-size: 11px; line-height: 1; letter-spacing: 0.1em; text-transform: uppercase;
   font-weight: var(--weight-medium); font-variant-numeric: tabular-nums;
 }
 .plan__meta--tl { top: 14px; left: 16px; }
@@ -556,7 +563,7 @@ p + p { margin-top: 0.8em; }
 .is-flat .plan__ghost { transform: translate(-22px, 12px); }
 .is-flat .plan__ghost em { visibility: hidden; }
 .plan__brand {
-  position: absolute; right: -58px; top: -30px; width: 72px; height: 90px; display: flex; flex-direction: column; gap: 7px; padding: 8px;
+  position: absolute; right: -58px; top: -8px; width: 72px; height: 90px; display: flex; flex-direction: column; gap: 7px; padding: 8px;
   border-radius: 8px; background: var(--brand-navy); box-shadow: -10px 14px 24px rgba(13, 19, 32, 0.25);
   opacity: 0; transform: translateZ(90px); transition: opacity var(--dur-ui) var(--ease-ws-ui), transform 760ms var(--ease-ws);
 }
@@ -620,7 +627,7 @@ p + p { margin-top: 0.8em; }
 .bon__row dd { margin: 0; font-weight: var(--weight-medium); overflow-wrap: anywhere; hyphens: auto; }
 .bon--noprice .bon__row { grid-template-columns: 96px minmax(0, 1fr); }
 .bon--noprice .bon__amt { display: none; }
-.bon__amt { color: var(--text-secondary); text-align: right; white-space: nowrap; }
+.bon__amt { margin: 0; color: var(--text-secondary); text-align: right; white-space: nowrap; }
 .bon__total { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 14px 0 4px; }
 .bon__total span { font-size: var(--body-s-size); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
 .bon__total b { font-size: var(--card-size); line-height: var(--card-line); font-weight: var(--weight-bold); background: var(--grad-accent-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -657,6 +664,7 @@ p + p { margin-top: 0.8em; }
     transition: transform var(--dur-ui) var(--ease-ws-ui), visibility 0s linear var(--dur-ui);
   }
   .plan-dock.is-on { transform: none; visibility: visible; transition: transform var(--dur-ui) var(--ease-ws-ui), visibility 0s; }
+  .plan-dock.is-on.is-typing { transform: translateY(calc(100% + 24px)); visibility: hidden; transition: transform var(--dur-ui) var(--ease-ws-ui), visibility 0s linear var(--dur-ui); }
   .plan-dock .plan__rail { grid-column: 1 / -1; }
   /* Mini-Bauplan: verkleinerte Kopie der Bühne, ohne eigene Einflug-Animationen */
   .plan-mini {
@@ -818,6 +826,9 @@ p + p { margin-top: 0.8em; }
   }
 }
 .js .fx .fx-c { opacity: 0; }
+/* Fußnoten-Hochzahlen zerlegt der Text-Effekt nicht; sie erscheinen mit dem Ende der Zeile statt vor ihr */
+.js .fx sup { opacity: 0; transition: opacity 400ms var(--ease-ws); }
+.js .fx.fx-on sup, .js [data-reveal].is-revealed .fx sup { opacity: 1; transition-delay: calc(var(--fx-n, 1) * var(--fx-step, 40ms)); }
 .js .fx.fx-on .fx-c, .js [data-reveal].is-revealed .fx .fx-c {
   opacity: 1;
   animation: fx-in var(--fx-dur) var(--ease-ws) backwards;

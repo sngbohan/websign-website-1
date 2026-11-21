@@ -21,11 +21,12 @@ const gz = (p) => gzipSync(readFileSync(join(ROOT, p)), { level: 9 }).length;
 const raw = (p) => statSync(join(ROOT, p)).size;
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
 
-// jsGzip: 60 → 75 KB am 21.11.2026 für Live-Bauplan und Bon. Bewusste Entscheidung, kein Freibrief:
+// jsGzip: 60 → 75 KB am 21.11.2026 für Live-Bauplan und Bon, → 150 KB am selben Tag für die React-Insel (GlowCard, ~70 KB gzip).
+// Bewusste Entscheidung, kein Freibrief:
 // Konfigurator und Bauplan laden erst, wenn der Abschnitt näher kommt (main.js, near), und jede Datei bleibt so knapp wie möglich.
-const BUDGET = { jsGzip: 75 * 1024, firstView: 350 * 1024, site: 6 * 1024 * 1024, og: 300 * 1024 };
+const BUDGET = { jsGzip: 150 * 1024, firstView: 350 * 1024, site: 6 * 1024 * 1024, og: 300 * 1024 };
 const SKIP_DIRS = new Set(['.git', 'node_modules', '.claude']);
-const NOT_DEPLOYED = /^(tools|docs)\/|\.md$|^tokens\.json$|^\.git/;      // zählt nicht zum Seitengewicht
+const NOT_DEPLOYED = /^(tools|docs|src|components|lib)\/|\.md$|^tokens\.json$|^\.git|^(package(-lock)?|tsconfig|components)\.json$|^tailwind\.config\.js$/;      // zählt nicht zum Seitengewicht
 const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr', 'path', 'use', 'rect', 'circle']);
 const URL_ATTRS = ['src', 'href', 'srcset', 'poster', 'action', 'data-src', 'data-src-s', 'data-src-l'];
 
@@ -163,7 +164,8 @@ for (const f of css) {
   if (/@import/.test(s)) fail(`${f} nutzt @import`);
   if (/SF Pro|-apple-system|BlinkMacSystemFont/.test(s)) fail(`${f} nennt eine Apple-Systemschrift`);
 }
-const allowedLiteral = (u) => u.startsWith('http://www.w3.org/') || u === siteUrl || u === config.form.endpoint || u === config.contact.bookingUrl;
+// react.dev/errors: nur Text in Reacts Fehlermeldungen (gebündelt in glow-cards.js), es wird nichts abgerufen
+const allowedLiteral = (u) => u.startsWith('http://www.w3.org/') || u.startsWith('https://react.dev/errors/') || u === siteUrl || u === config.form.endpoint || u === config.contact.bookingUrl;
 for (const f of js) {
   const s = read(f);
   const code = s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`])\/\/.*$/gm, '$1');    // ohne Kommentare
@@ -222,6 +224,8 @@ for (const m of main.matchAll(/if \(\$\('([^']+)'\)\) (?:near\('[^']+', \(\) => 
 }
 // Statische Importe der geladenen Module zählen mit (z. B. configurator.js → bauplan.js); Importe verzögerter Module sind selbst verzögert
 for (const f of pageJs) for (const m of read(f).matchAll(/^import .* from '\.\/([\w-]+\.js)'/gm)) { pageJs.add(`assets/js/${m[1]}`); if (lazyJs.has(f)) lazyJs.add(`assets/js/${m[1]}`); }
+// Dynamische Importe aus geladenen Modulen (z. B. configurator.js → glow-cards.js) laden später: Seite ja, Erstaufruf nein
+for (const f of pageJs) for (const m of read(f).matchAll(/import\('\.\/([\w-]+\.js)'\)/g)) { const d = `assets/js/${m[1]}`; if (f !== 'assets/js/main.js') { pageJs.add(d); lazyJs.add(d); } }
 const pageJsGzip = [...pageJs].reduce((n, f) => n + gz(f), 0);
 const pageJsRaw = [...pageJs].reduce((n, f) => n + raw(f), 0);
 const allJsGzip = js.reduce((n, f) => n + gz(f), 0);

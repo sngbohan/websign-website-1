@@ -245,4 +245,9 @@ export function initConfigurator(config, track = () => {}) {
 
   update();
   syncUndo();
+
+  // Leuchtende Auswahlkarten (React-Insel aus src/glow-cards.tsx): nur mit Maus, lädt nach, ohne den Konfigurator aufzuhalten
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    import('./glow-cards.js').then((m) => m.mountGlowCards(form)).catch((err) => console.error('[Websign Glow]', err));
+  }
 }

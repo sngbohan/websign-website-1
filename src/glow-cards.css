@@ -1,0 +1,48 @@
+/* Websign · Stylesheet der React-Insel „leuchtende Auswahlkarten“ (Quelle; gebaut nach assets/css/glow-cards.css).
+   Tailwind liefert nur die Klassen, die GlowCard benutzt (ohne Preflight). Darunter das Websign-Thema:
+   Die Vorlage ist für dunkle Flächen gebaut, der Konfigurator ist hell. Die Komponente setzt ihre Werte als
+   Inline-Stil; überschreiben lassen sie sich deshalb nur mit !important. */
+@tailwind utilities;
+
+/* Behälter: .option__box gibt Rahmen, Fläche und Innenabstand an die GlowCard ab */
+.option__box.option__box--glow { display: block; padding: 0; background: none; box-shadow: none; }
+
+.option__box--glow > [data-glow] {
+  --backdrop: var(--surface) !important;          /* weiße Karte statt Grauschleier */
+  --backup-border: var(--line) !important;         /* feiner Rand wie die übrigen Karten */
+  --border: 2 !important;
+  --radius: 12 !important;                         /* = --r-form */
+  --size: 240 !important;                          /* Lichtkegel etwas größer als in der Vorlage */
+  --outer: 0.55 !important;                        /* äußerer Schein dezenter auf hellem Grund */
+  --saturation: 72;
+  --lightness: 52;
+  --bg-spot-opacity: 0.16;
+  --border-spot-opacity: 1;
+  --border-light-opacity: 0;                       /* weißer Lichtring ist auf Weiß unsichtbar, also aus */
+  height: 100%;
+  min-height: inherit;
+  border-radius: var(--r-form) !important;
+  box-shadow: 0 10px 24px -20px rgba(40, 65, 114, 0.5) !important;   /* statt schwarzem Schatten */
+  touch-action: auto !important;                   /* Vorlage sperrt Wischen (touch-action: none); auf Touch-Laptops würde die Seite nicht scrollen */
+  transition: box-shadow var(--dur-micro) var(--ease-ws-ui);
+}
+/* Auf hellem Grund würde brightness(2) das Blau auswaschen */
+.option__box--glow [data-glow]::before { filter: none; }
+
+/* Inhalt wie vorher: Name und Beschreibung links, Preis rechts */
+.option__box--glow .option__inner { display: flex; justify-content: space-between; gap: 12px; align-self: start; }
+
+/* Gewählt: Rand im Websign-Blau */
+.option input:checked + .option__box--glow > [data-glow] {
+  --backup-border: var(--action) !important;
+  box-shadow: inset 0 0 0 1px var(--action), 0 12px 26px -18px rgba(71, 102, 160, 0.55) !important;
+}
+/* Gesperrte Schritte leuchten nicht */
+.option input:disabled + .option__box--glow > [data-glow] { --bg-spot-opacity: 0; }
+.option input:disabled + .option__box--glow [data-glow]::before,
+.option input:disabled + .option__box--glow [data-glow] [data-glow] { opacity: 0; }
+
+@media (forced-colors: active) {
+  .option__box--glow [data-glow]::before, .option__box--glow [data-glow]::after, .option__box--glow [data-glow] [data-glow] { display: none; }
+  .option__box--glow > [data-glow] { border: 1px solid ButtonText !important; }
+}
