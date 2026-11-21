@@ -332,8 +332,10 @@ p + p { margin-top: 0.8em; }
 
 /* ---------- Scroll-Galerie ---------- */
 .gallery-wrap { position: relative; }
+/* position: relative macht die Galerie zum Bezugsrahmen für absolut positionierte Kinder (z. B. die sr-only-Texte
+   der Text-Effekte). Sonst entkommen sie dem overflow und verbreitern die ganze Seite. */
 .gallery {
-  display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  position: relative; display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
   padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); overscroll-behavior-x: contain;
 }
 .gallery::-webkit-scrollbar { display: none; }
