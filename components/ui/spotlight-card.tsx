@@ -3,8 +3,8 @@ import React, { useEffect, useRef, ReactNode } from 'react';
 interface GlowCardProps {
   children: ReactNode;
   className?: string;
-  // Websign: 'websign' ergänzt (nur Markenblau), siehe glowColorMap
-  glowColor?: 'blue' | 'purple' | 'green' | 'red' | 'orange' | 'websign';
+  // Websign: 'websign' (Markenblau) und 'chrome' (kühles Silber wie das Chrom-Logo) ergänzt, siehe glowColorMap
+  glowColor?: 'blue' | 'purple' | 'green' | 'red' | 'orange' | 'websign' | 'chrome';
   size?: 'sm' | 'md' | 'lg';
   width?: string | number;
   height?: string | number;
@@ -18,7 +18,9 @@ const glowColorMap = {
   red: { base: 0, spread: 200 },
   orange: { base: 30, spread: 200 },
   // Websign: eine Farbe, Markenblau #4766a0 (Farbton ≈ 219°), ohne Farbwechsel über die Bildschirmbreite
-  websign: { base: 219, spread: 0 }
+  websign: { base: 219, spread: 0 },
+  // Websign-Chrom: kühles Blaugrau aus dem Chrom-Logo; Sättigung und Helligkeit setzt src/glow-cards.css
+  chrome: { base: 216, spread: 0 }
 };
 
 const sizeMap = {

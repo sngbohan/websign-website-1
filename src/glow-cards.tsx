@@ -5,6 +5,9 @@
 import { createRoot } from 'react-dom/client';
 import { GlowCard } from '@/components/ui/spotlight-card';
 
+// Farbe der leuchtenden Ränder: 'chrome' (Silber wie das Chrom-Logo) oder 'websign' (Markenblau)
+const GLOW: 'chrome' | 'websign' = 'chrome';
+
 const CSS_HREF = new URL('../css/glow-cards.css', import.meta.url).href;
 
 // Stylesheet erst laden, dann umbauen: sonst springen die Karten kurz ohne Rahmen
@@ -30,7 +33,7 @@ export async function mountGlowCards(scope: ParentNode): Promise<void> {
     const html = box.innerHTML;
     box.classList.add('option__box--glow');
     createRoot(box).render(
-      <GlowCard customSize glowColor="websign" className="option__glow">
+      <GlowCard customSize glowColor={GLOW} className={`option__glow option__glow--${GLOW}`}>
         <span className="option__inner" dangerouslySetInnerHTML={{ __html: html }} />
       </GlowCard>,
     );

@@ -26,6 +26,9 @@
   touch-action: auto !important;                   /* Vorlage sperrt Wischen (touch-action: none); auf Touch-Laptops würde die Seite nicht scrollen */
   transition: box-shadow var(--dur-micro) var(--ease-ws-ui);
 }
+/* Chrom: kühles Silber wie das Chrom-Logo (#c6d2e5 bis Navy). Dunkler Kern, damit es auf Weiß als Metall liest */
+.option__box--glow > .option__glow--chrome { --saturation: 18; --lightness: 40; --bg-spot-opacity: 0.02; }
+
 /* Auf hellem Grund würde brightness(2) das Blau auswaschen */
 .option__box--glow [data-glow]::before { filter: none; }
 
