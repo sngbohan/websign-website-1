@@ -13,10 +13,10 @@
   --border: 2 !important;
   --radius: 12 !important;                         /* = --r-form */
   --size: 240 !important;                          /* Lichtkegel etwas größer als in der Vorlage */
-  --outer: 0.55 !important;                        /* äußerer Schein dezenter auf hellem Grund */
-  --saturation: 72;
-  --lightness: 52;
-  --bg-spot-opacity: 0.16;
+  --outer: 0 !important;                           /* kein äußerer, weichgezeichneter Schein */
+  --saturation: 39;                                /* Markenblau #4766a0 = hsl(219 39% 45%) */
+  --lightness: 45;
+  --bg-spot-opacity: 0.025;                        /* Lichtfleck der Maus auf der Fläche: kaum sichtbar */
   --border-spot-opacity: 1;
   --border-light-opacity: 0;                       /* weißer Lichtring ist auf Weiß unsichtbar, also aus */
   height: 100%;

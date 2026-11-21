@@ -3,7 +3,7 @@ import React, { useEffect, useRef, ReactNode } from 'react';
 interface GlowCardProps {
   children: ReactNode;
   className?: string;
-  // Websign: 'websign' ergänzt (Markenblau → Mint), siehe glowColorMap
+  // Websign: 'websign' ergänzt (nur Markenblau), siehe glowColorMap
   glowColor?: 'blue' | 'purple' | 'green' | 'red' | 'orange' | 'websign';
   size?: 'sm' | 'md' | 'lg';
   width?: string | number;
@@ -17,8 +17,8 @@ const glowColorMap = {
   green: { base: 120, spread: 200 },
   red: { base: 0, spread: 200 },
   orange: { base: 30, spread: 200 },
-  // Websign: links Markenblau (#4766a0, Farbton ≈ 220°), rechts Mint (#7ce0c3, Farbton ≈ 160°)
-  websign: { base: 220, spread: -60 }
+  // Websign: eine Farbe, Markenblau #4766a0 (Farbton ≈ 219°), ohne Farbwechsel über die Bildschirmbreite
+  websign: { base: 219, spread: 0 }
 };
 
 const sizeMap = {
