@@ -187,6 +187,17 @@ p + p { margin-top: 0.8em; }
 /* Claim: ohne Scroll-Szene einfach zwischen Logo und Button */
 .hero__claim { position: relative; z-index: 1; width: var(--band); margin: 0 auto 8px; text-align: center; }
 .hero__claim .t-hero { margin-top: 0.08em; }
+/* Schriftzug WEBSIGN: Syne 800, breit gesperrt. Die unsichtbare Kontur macht die Buchstaben etwas kräftiger,
+   Verlauf und Lichtstreifen (background-clip: text) füllen sie mit. Auf schmalen Bildschirmen passt er in eine Zeile. */
+.hero__brand {
+  font-family: "Syne", var(--font); font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+  font-size: min(var(--hero-size), 10vw); white-space: nowrap;
+  -webkit-text-stroke: 0.035em transparent; paint-order: stroke fill;
+  --round: url(#t-round-l);   /* runde Ecken (SVG-Filter in index.html), Stärke folgt der Schriftgröße */
+  filter: var(--round);
+}
+@media (max-width: 1100px) { .hero__brand { --round: url(#t-round-m); } }
+@media (max-width: 640px) { .hero__brand { --round: url(#t-round-s); } }
 .hero__claim .t-subhead { color: var(--brand-text); max-width: 560px; margin-inline: auto; }   /* Verlauf nur ab Headline-Größe, darunter einfarbig */
 
 /* Scroll-Szene */
@@ -202,8 +213,10 @@ p + p { margin-top: 0.8em; }
   --o: clamp(0, (var(--t, 0) - var(--d, 0)) / 0.42, 1);
   opacity: var(--o); transform: translateY(calc((1 - var(--o)) * 36px)); filter: blur(calc((1 - var(--o)) * 14px));
 }
+/* Der Schriftzug behält beim Einblenden seine runden Ecken */
+.hero--scroll .hero__claim > .hero__brand { filter: var(--round) blur(calc((1 - var(--o)) * 14px)); }
+.js .hero--scroll .hero__claim > .fx.hero__brand { filter: var(--round); }
 .hero--scroll .hero__claim > :nth-child(2) { --d: 0.16; }
-.hero--scroll .hero__claim > :nth-child(3) { --d: 0.38; }
 .hero__content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0; }
 .hero__cta { margin-top: 32px; }
 .hero__meta { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 24px; color: var(--text-secondary); font-size: var(--body-s-size); line-height: var(--body-s-line); letter-spacing: var(--body-s-track); }
