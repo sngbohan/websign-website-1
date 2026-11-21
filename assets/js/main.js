@@ -352,12 +352,19 @@ initScene();
 initSectionTracking();
 
 const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1));
+// Lädt ein Modul erst, wenn sein Abschnitt etwa anderthalb Bildschirme entfernt ist (auch nach Sprung per Anker)
+const near = (sel, load) => {
+  const el = $(sel);
+  if (!('IntersectionObserver' in window)) { load(); return; }
+  const io = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) { io.disconnect(); load(); } }, { rootMargin: '150% 0px' });
+  io.observe(el);
+};
 idle(() => {
   if ($('.lg')) import('./liquid-glass.js').then((m) => m.initLiquidGlass()).catch((err) => console.error('[Websign Glas]', err));
   if ($('[data-glass-hero]')) import('./glass-reveal.js').then((m) => m.initGlassReveal(track)).catch((err) => console.error('[Websign Glas-Logo]', err));
   if ($('[data-stage]')) import('./scene.js').then((m) => m.initScenes()).catch((err) => { document.documentElement.classList.add('no-webgl'); console.error('[Websign 3D]', err); });
   if ($('[data-folders]')) import('./glass-folder.js').then((m) => m.initFolders(config, track)).catch((err) => console.error('[Websign Projekte]', err));
-  if ($('[data-config-form]')) import('./configurator.js').then((m) => m.initConfigurator(config, track)).catch((err) => console.error('[Websign Konfigurator]', err));
+  if ($('[data-config-form]')) near('[data-config-form]', () => import('./configurator.js').then((m) => m.initConfigurator(config, track)).catch((err) => console.error('[Websign Konfigurator]', err)));
   if ($('[data-kf], [data-kf-preset]')) import('./motion.js').then((m) => m.initMotion()).catch((err) => console.error('[Websign Motion]', err));
   if ($('[data-count-to]')) import('./count.js').then((m) => m.initCount()).catch((err) => console.error('[Websign Zähler]', err));
   if ($('video[data-video]')) import('./media.js').then((m) => m.initMedia()).catch((err) => console.error('[Websign Video]', err));

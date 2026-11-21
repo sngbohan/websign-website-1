@@ -21,7 +21,9 @@ const gz = (p) => gzipSync(readFileSync(join(ROOT, p)), { level: 9 }).length;
 const raw = (p) => statSync(join(ROOT, p)).size;
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
 
-const BUDGET = { jsGzip: 60 * 1024, firstView: 350 * 1024, site: 6 * 1024 * 1024, og: 300 * 1024 };
+// jsGzip: 60 → 75 KB am 21.11.2026 für Live-Bauplan und Bon. Bewusste Entscheidung, kein Freibrief:
+// Konfigurator und Bauplan laden erst, wenn der Abschnitt näher kommt (main.js, near), und jede Datei bleibt so knapp wie möglich.
+const BUDGET = { jsGzip: 75 * 1024, firstView: 350 * 1024, site: 6 * 1024 * 1024, og: 300 * 1024 };
 const SKIP_DIRS = new Set(['.git', 'node_modules', '.claude']);
 const NOT_DEPLOYED = /^(tools|docs)\/|\.md$|^tokens\.json$|^\.git/;      // zählt nicht zum Seitengewicht
 const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr', 'path', 'use', 'rect', 'circle']);
@@ -209,17 +211,22 @@ if (existsSync(join(ROOT, 'site.webmanifest'))) {
 const index = read('index.html');
 const main = read('assets/js/main.js');
 const pageJs = new Set(['assets/js/main.js']);
+const lazyJs = new Set();   // lädt erst bei Annäherung (near): zählt zur Seite, nicht zum Erstaufruf
 for (const m of main.matchAll(/^import .* from '\.\/([\w-]+\.js)'/gm)) pageJs.add(`assets/js/${m[1]}`);
-for (const m of main.matchAll(/if \(\$\('([^']+)'\)\) import\('\.\/([\w-]+\.js)'\)/g)) {
+// auch verzögert geladene: if ($('…')) near('…', () => import('./x.js'))
+for (const m of main.matchAll(/if \(\$\('([^']+)'\)\) (?:near\('[^']+', \(\) => )?import\('\.\/([\w-]+\.js)'\)/g)) {
   const keys = [...m[1].matchAll(/\[([\w-]+)\]|\.([\w-]+)/g)].map((k) => k[1] || k[2]);
   const used = keys.some((k) => (k.startsWith('data-') ? index.includes(`${k}`) : new RegExp(`class="[^"]*\\b${k}\\b`).test(index)));
   if (used) pageJs.add(`assets/js/${m[2]}`);
+  if (used && m[0].includes('near(')) lazyJs.add(`assets/js/${m[2]}`);
 }
+// Statische Importe der geladenen Module zählen mit (z. B. configurator.js → bauplan.js); Importe verzögerter Module sind selbst verzögert
+for (const f of pageJs) for (const m of read(f).matchAll(/^import .* from '\.\/([\w-]+\.js)'/gm)) { pageJs.add(`assets/js/${m[1]}`); if (lazyJs.has(f)) lazyJs.add(`assets/js/${m[1]}`); }
 const pageJsGzip = [...pageJs].reduce((n, f) => n + gz(f), 0);
 const pageJsRaw = [...pageJs].reduce((n, f) => n + raw(f), 0);
 const allJsGzip = js.reduce((n, f) => n + gz(f), 0);
 const model = 'assets/3d/ws-field.bin';
-const firstView = gz('index.html') + css.filter((f) => index.includes(f)).reduce((n, f) => n + gz(f), 0) + pageJsGzip + gz(model)
+const firstView = gz('index.html') + css.filter((f) => index.includes(f)).reduce((n, f) => n + gz(f), 0) + pageJsGzip - [...lazyJs].reduce((n, f) => n + gz(f), 0) + gz(model)
   + raw('assets/fonts/geist-latin.woff2') + gz('assets/img/favicon.svg');
 const siteBytes = files.filter((f) => !NOT_DEPLOYED.test(f)).reduce((n, f) => n + raw(f), 0);
 const budget = (label, value, max) => (value > max ? fail(`Budget überschritten · ${label}: ${kb(value)} (Grenze ${kb(max)})`) : ok(`Budget · ${label}: ${kb(value)} von ${kb(max)}`));
