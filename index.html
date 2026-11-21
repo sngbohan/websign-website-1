@@ -289,8 +289,8 @@
             </div>
             <div class="stat" data-reveal-item>
               <dt class="stat__eyebrow">JavaScript gesamt</dt>
-              <dd class="stat__value">48&nbsp;KB</dd>
-              <dd class="stat__label">Für Navigation, Animation, 3D, Glas-Logo, Glas-Button, Projektordner und Konfigurator zusammen.<sup class="fn"><a href="#fn-3" id="fnref-3" aria-label="Fußnote 3">3</a></sup></dd>
+              <dd class="stat__value">51&nbsp;KB</dd>
+              <dd class="stat__label">Für Navigation, Animation, 3D, Glas-Logo, Glas-Button, Projektordner, Konfigurator und Bauplan zusammen.<sup class="fn"><a href="#fn-3" id="fnref-3" aria-label="Fußnote 3">3</a></sup></dd>
             </div>
             <div class="stat" data-reveal-item>
               <dt class="stat__eyebrow">3D-Modell</dt>
@@ -433,6 +433,31 @@
           </form>
 
           <aside class="summary" aria-labelledby="summary-title">
+            <!-- Live-Bauplan (bauplan.js): Die Bühne ist Illustration, die Liste darunter bleibt die lesbare Zusammenfassung.
+                 Ohne JavaScript bleibt alles hidden. -->
+            <div class="plan" data-plan hidden>
+              <div class="plan__hud">
+                <ol class="plan__rail" data-plan-rail aria-label="Fortschritt">
+                  <li data-rail="type"><span>Art</span></li><li data-rail="base"><span>Lage</span></li><li data-rail="scope"><span>Umfang</span></li><li data-rail="extras"><span>Extras</span></li><li data-rail="time"><span>Zeit</span></li>
+                </ol>
+                <div class="plan__tools">
+                  <button class="plan__tool" type="button" data-plan-undo disabled aria-label="Letzte Auswahl rückgängig machen"><svg aria-hidden="true"><use href="#i-reset"/></svg></button>
+                  <button class="plan__tool plan__tool--text" type="button" data-plan-view aria-pressed="false">Plan</button>
+                </div>
+              </div>
+              <div class="plan__stage" data-plan-stage aria-hidden="true">
+                <span class="plan__meta plan__meta--tl">Bauplan · WS-01</span>
+                <span class="plan__meta plan__meta--tr" data-plan-count>1 Ebene</span>
+                <div class="plan__iso" data-plan-iso>
+                  <span class="plan__ghost"><em>Bisherige Seite</em></span>
+                  <span class="plan__sheets" data-plan-sheets></span>
+                  <span class="plan__page" data-plan-page></span>
+                  <span class="plan__brand"><svg viewBox="0 0 608.5 268.5"><use href="#ws-mark"/></svg><span class="plan__swatches"><i></i><i></i><i></i><i></i></span><em>Marke</em></span>
+                </div>
+                <span class="plan__meta plan__meta--bl plan__time" data-plan-time hidden>Start · <b></b></span>
+              </div>
+              <p class="plan__caption" aria-live="polite" data-plan-caption>Wähl links eine Projektart. Hier entsteht dein Bauplan.</p>
+            </div>
             <h3 class="t-card" id="summary-title">Dein Projekt.</h3>
             <dl class="summary__list" data-summary>
               <div class="summary__row"><dt>Projektart</dt><dd class="is-empty" data-sum="type">Noch offen</dd></div>
@@ -453,6 +478,15 @@
             <p class="summary__status" role="status" data-form-status></p>
             <noscript><p class="summary__note">Der Konfigurator braucht JavaScript. Unsere Kontaktangaben stehen im <a href="impressum.html">Impressum</a>.</p></noscript>
           </aside>
+        </div>
+
+        <!-- Mobile Leiste: Fortschritt und letzter Schritt, solange die Bühne nicht im Blick ist (nur bis 1068 px) -->
+        <div class="plan-dock" data-plan-dock hidden>
+          <ol class="plan__rail" data-plan-rail aria-hidden="true">
+            <li data-rail="type"><span>Art</span></li><li data-rail="base"><span>Lage</span></li><li data-rail="scope"><span>Umfang</span></li><li data-rail="extras"><span>Extras</span></li><li data-rail="time"><span>Zeit</span></li>
+          </ol>
+          <p class="plan-dock__caption" aria-hidden="true" data-plan-dock-caption>Wähl eine Projektart.</p>
+          <button class="plan__tool" type="button" data-plan-undo disabled aria-label="Letzte Auswahl rückgängig machen"><svg aria-hidden="true"><use href="#i-reset"/></svg></button>
         </div>
 
         <div class="faq" data-reveal-item>
@@ -518,7 +552,7 @@
         <ol class="footnotes">
           <li id="fn-1"><a href="#fnref-1" aria-label="Zurück zum Text, Fußnote 1">1.</a><span>Geprüft am 14.11.2026 im Netzwerk-Protokoll des Browsers: Alle Dateien dieser Seite, auch die Schrift, werden von derselben Adresse geladen wie die Seite selbst.</span></li>
           <li id="fn-2"><a href="#fnref-2" aria-label="Zurück zum Text, Fußnote 2">2.</a><span>Geprüft am 14.11.2026: Die Seite setzt keine Cookies und nutzt weder localStorage noch sessionStorage.</span></li>
-          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der sieben JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Unkomprimiert 130&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 18.11.2026.</span></li>
+          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der acht JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Unkomprimiert 139&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 21.11.2026.</span></li>
           <li id="fn-4"><a href="#fnref-4" aria-label="Zurück zum Text, Fußnote 4">4.</a><span>Geometrie-Daten des Logos, mit gzip (Stufe 9) komprimiert. Unkomprimiert 760&nbsp;KB. Mit der schwächeren Stufe&nbsp;6, die viele Server nutzen, sind es rund 175&nbsp;KB. Gemessen am 17.11.2026.</span></li>
           <li id="fn-5"><a href="#fnref-5" aria-label="Zurück zum Text, Fußnote 5">5.</a><span>Der Richtpreis ist unverbindlich und ersetzt kein Angebot. Er ergibt sich aus Projektart, Ausgangslage, Umfang und Extras.<span data-requires="pricing.vatNote"> <span data-config="pricing.vatNote"><mark class="ph">[Hinweis netto/brutto]</mark></span></span></span></li>
         </ol>

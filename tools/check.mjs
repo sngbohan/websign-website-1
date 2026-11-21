@@ -215,6 +215,8 @@ for (const m of main.matchAll(/if \(\$\('([^']+)'\)\) import\('\.\/([\w-]+\.js)'
   const used = keys.some((k) => (k.startsWith('data-') ? index.includes(`${k}`) : new RegExp(`class="[^"]*\\b${k}\\b`).test(index)));
   if (used) pageJs.add(`assets/js/${m[2]}`);
 }
+// Statische Importe der geladenen Module zählen mit (z. B. configurator.js → bauplan.js)
+for (const f of pageJs) for (const m of read(f).matchAll(/^import .* from '\.\/([\w-]+\.js)'/gm)) pageJs.add(`assets/js/${m[1]}`);
 const pageJsGzip = [...pageJs].reduce((n, f) => n + gz(f), 0);
 const pageJsRaw = [...pageJs].reduce((n, f) => n + raw(f), 0);
 const allJsGzip = js.reduce((n, f) => n + gz(f), 0);

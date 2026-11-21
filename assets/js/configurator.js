@@ -3,6 +3,8 @@
 // Fehlen alle Preise, zeigt die Seite keine Preisschilder und verspricht den Richtpreis per E-Mail
 // (der Ausweichtext hängt in index.html an data-requires-not="pricing.types").
 
+import { initBauplan } from './bauplan.js';
+
 const SINGLE_PAGE = ['onepager', 'landingpage'];
 const ORDER = ['type', 'base', 'scope', 'extras', 'time', 'contact'];
 const ON_REQUEST = 'auf Anfrage';
@@ -63,7 +65,25 @@ export function initConfigurator(config, track = () => {}) {
     el.classList.toggle('is-empty', !text);
   }
 
-  function update() {
+  // Live-Bauplan und Rückgängig: Vor jeder Änderung merkt sich der Konfigurator die gewählten Felder
+  const plan = initBauplan(document.querySelector('[data-plan]'), config);
+  const undoBtns = [...document.querySelectorAll('[data-plan-undo]')];
+  const history = [];
+  let snapshot = [];
+  const choices = () => [...form.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"][name="extras"]:checked')].map((i) => `${i.name}=${i.value}`);
+  const syncUndo = () => undoBtns.forEach((b) => { b.disabled = history.length === 0; });
+  undoBtns.forEach((b) => b.addEventListener('click', () => {
+    const prev = history.pop();
+    if (!prev) return;
+    form.querySelectorAll('input[type="radio"], input[name="extras"]').forEach((i) => { i.checked = prev.includes(`${i.name}=${i.value}`); });
+    snapshot = prev;
+    setStatus('');
+    update('undo');
+    syncUndo();
+    track('config-undo');
+  }));
+
+  function update(changed) {
     const s = state();
 
     // Spätere Schritte bleiben gedimmt, bis der vorherige gewählt ist
@@ -83,6 +103,7 @@ export function initConfigurator(config, track = () => {}) {
     setSum('scope', s.single ? 'Eine Seite' : s.scope && `${label(s.scope)} · ${config.scopeLabels[s.scope.value]}`);
     setSum('extras', s.extras.map(label).join(', '));
     setSum('time', s.time && label(s.time));
+    if (plan) plan.render(s, changed);
 
     // Richtpreis: Summe aller gewählten Bausteine
     totalText = ON_REQUEST;
@@ -106,7 +127,11 @@ export function initConfigurator(config, track = () => {}) {
     }
     if (ORDER.includes(t.name)) track('config-step', { step: t.name, value: t.value });
     setStatus('');
-    update();
+    update(t);
+    if (ORDER.includes(t.name)) {
+      const now = choices();
+      if (now.join() !== snapshot.join()) { history.push(snapshot); snapshot = now; syncUndo(); }
+    }
   });
 
   function setStatus(text, kind) {
@@ -190,7 +215,7 @@ export function initConfigurator(config, track = () => {}) {
         if (!res.ok) throw new Error(String(res.status));
         setStatus(`Danke. Deine Anfrage ist angekommen. Wir melden uns ${responseTime ? `innerhalb von ${responseTime}` : 'bei dir'}.`, 'success');
         track('config-submit', { via: 'endpoint' });
-        form.reset(); update();
+        form.reset(); history.length = 0; snapshot = []; syncUndo(); update();
       } catch (err) {
         const alt = config.contact.email ? ` oder schreib uns direkt an ${config.contact.email}` : '';
         setStatus(`Das hat nicht geklappt. Bitte versuch es noch einmal${alt}.`, 'error');
@@ -215,4 +240,5 @@ export function initConfigurator(config, track = () => {}) {
   });
 
   update();
+  syncUndo();
 }
