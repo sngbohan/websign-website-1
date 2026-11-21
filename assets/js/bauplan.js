@@ -57,6 +57,22 @@ export function initBauplan(root, config) {
     io.observe(form); io.observe(stage);
   }
 
+  // Mini-Bauplan in der mobilen Leiste: eine verkleinerte Kopie der Bühne; Tippen springt zur großen Bühne
+  const mini = document.querySelector('[data-plan-mini]');
+  const miniIn = document.querySelector('[data-plan-mini-in]');
+  mini?.addEventListener('click', () => {
+    const smooth = !document.documentElement.classList.contains('reduced-motion');
+    root.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
+  });
+  function mirror(changed) {
+    if (!miniIn) return;
+    const copy = iso.cloneNode(true);
+    copy.removeAttribute('data-plan-iso');
+    copy.querySelectorAll('[data-plan-page], [data-plan-sheets]').forEach((n) => { n.removeAttribute('data-plan-page'); n.removeAttribute('data-plan-sheets'); });
+    miniIn.replaceChildren(copy);
+    if (changed) { mini.classList.remove('is-bump'); void mini.offsetWidth; mini.classList.add('is-bump'); }
+  }
+
   viewBtn?.addEventListener('click', () => {
     const flat = viewBtn.getAttribute('aria-pressed') !== 'true';
     viewBtn.setAttribute('aria-pressed', String(flat));
@@ -145,6 +161,7 @@ export function initBauplan(root, config) {
       if (keys.every((k) => s.done[k]) && t.name === 'time') say('Fertig geplant. Jetzt fehlt nur noch deine Anfrage.');
     }
     last = { type, motion };
+    mirror(changed);
   }
 
   return { render };
