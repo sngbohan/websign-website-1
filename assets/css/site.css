@@ -570,6 +570,65 @@ p + p { margin-top: 0.8em; }
 @keyframes plan-pulse { 0% { box-shadow: 0 0 0 0 rgba(124, 224, 195, 0.8); } 100% { box-shadow: 0 0 0 10px rgba(124, 224, 195, 0); } }
 @keyframes plan-say { from { opacity: 0; transform: translateY(4px); } }
 
+/* ---------- Bauplan-Bon (bauplan.js) ----------
+   Gedruckt aus einem Schlitz, sobald alle Schritte gewählt sind. Liste und Preisblock der Zusammenfassung bleiben
+   für Screenreader im Dokument, werden aber optisch vom Bon ersetzt. */
+.summary.is-printed .summary__list, .summary.is-printed .summary__price {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.bon { margin-top: 20px; }
+.bon__feed { position: relative; padding: 0 10px; overflow: hidden; }
+.bon__slot {
+  position: relative; z-index: 2; display: block; height: 12px; margin: 0 -10px; border-radius: 6px;
+  background: linear-gradient(var(--text-primary), #263048); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.bon__paper {
+  position: relative; z-index: 1; margin-top: -5px; padding: 26px 20px 30px; background: #fff; color: var(--text-primary);
+  box-shadow: 0 1px 0 var(--line-soft), 0 18px 30px -18px rgba(40, 65, 114, 0.35);
+  font-variant-numeric: tabular-nums;
+  /* Abrisskante unten */
+  -webkit-mask: linear-gradient(#000, #000) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 8px repeat-x;
+  mask: linear-gradient(#000, #000) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 8px repeat-x;
+}
+.bon__paper.is-printing { animation: bon-print 1500ms var(--ease-ws-ui) both; }
+.bon.is-out .bon__paper { animation: bon-retract 340ms var(--ease-ws-ui) both; }
+.bon__head { text-align: center; padding-bottom: 14px; border-bottom: 1px dashed var(--line); }
+.bon__head svg { display: block; width: 44px; height: 20px; margin: 0 auto; fill: var(--text-primary); }
+.bon__title { margin-top: 8px; font-weight: var(--weight-bold); font-size: var(--body-size); letter-spacing: 0.08em; text-transform: uppercase; }
+.bon__meta { margin-top: 2px; color: var(--text-secondary); font-size: var(--caption-size); letter-spacing: 0.06em; }
+.bon__rows { margin: 0; padding: 12px 0; border-bottom: 1px dashed var(--line); }
+.bon__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 12px; padding: 5px 0; font-size: var(--body-s-size); line-height: var(--body-s-line); }
+.bon__row dt { grid-column: 1 / -1; color: var(--text-tertiary); font-size: var(--caption-size); line-height: var(--caption-line); letter-spacing: 0.06em; text-transform: uppercase; }
+.bon__row dt:empty { display: none; }
+.bon--noprice .bon__row dt { grid-column: auto; color: var(--text-secondary); font-size: inherit; line-height: inherit; letter-spacing: 0; text-transform: none; }
+.bon--noprice .bon__row dt:empty { display: block; }
+.bon__row dd { margin: 0; font-weight: var(--weight-medium); overflow-wrap: anywhere; hyphens: auto; }
+.bon--noprice .bon__row { grid-template-columns: 96px minmax(0, 1fr); }
+.bon--noprice .bon__amt { display: none; }
+.bon__amt { color: var(--text-secondary); text-align: right; white-space: nowrap; }
+.bon__total { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 14px 0 4px; }
+.bon__total span { font-size: var(--body-s-size); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+.bon__total b { font-size: var(--card-size); line-height: var(--card-line); font-weight: var(--weight-bold); background: var(--grad-accent-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.bon__note { margin-top: 6px; color: var(--text-tertiary); font-size: var(--caption-size); line-height: var(--caption-line); }
+.bon__code { display: flex; justify-content: center; gap: 2px; height: 34px; margin-top: 16px; }
+.bon__code i { display: block; height: 100%; background: var(--text-primary); }
+.bon__copy { width: 100%; margin-top: 14px; }
+@keyframes bon-print {
+  0% { transform: translateY(-100%); }
+  22% { transform: translateY(-72%); } 28% { transform: translateY(-70%); }
+  50% { transform: translateY(-40%); } 56% { transform: translateY(-38%); }
+  78% { transform: translateY(-10%); } 84% { transform: translateY(-8%); }
+  100% { transform: translateY(0); }
+}
+@keyframes bon-retract { to { transform: translateY(-100%); } }
+@media (max-width: 734px) {
+  .bon--noprice .bon__row { grid-template-columns: 84px minmax(0, 1fr); }
+}
+@media (forced-colors: active) {
+  .bon__paper { border: 1px solid ButtonText; }
+  .bon__total b { color: CanvasText; background: none; }
+}
+
 /* Mobile Leiste: nur unterhalb von 1068 px, eingeblendet von bauplan.js */
 .plan-dock { display: none; }
 @media (max-width: 1068px) {

@@ -289,7 +289,7 @@
             </div>
             <div class="stat" data-reveal-item>
               <dt class="stat__eyebrow">JavaScript gesamt</dt>
-              <dd class="stat__value">52&nbsp;KB</dd>
+              <dd class="stat__value">53&nbsp;KB</dd>
               <dd class="stat__label">Für Navigation, Animation, 3D, Glas-Logo, Glas-Button, Projektordner, Konfigurator und Bauplan zusammen.<sup class="fn"><a href="#fn-3" id="fnref-3" aria-label="Fußnote 3">3</a></sup></dd>
             </div>
             <div class="stat" data-reveal-item>
@@ -466,6 +466,25 @@
               <div class="summary__row"><dt>Extras</dt><dd class="is-empty" data-sum="extras">Noch offen</dd></div>
               <div class="summary__row"><dt>Zeitrahmen</dt><dd class="is-empty" data-sum="time">Noch offen</dd></div>
             </dl>
+            <!-- Bauplan-Bon (bauplan.js): wird gedruckt, sobald alle fünf Schritte gewählt sind. Er zeigt dasselbe wie die
+                 Liste darüber, die dann nur noch für Screenreader da ist; deshalb ist der Bon selbst aria-hidden. -->
+            <div class="bon" data-bon hidden>
+              <div class="bon__feed" aria-hidden="true">
+                <span class="bon__slot"></span>
+                <div class="bon__paper" data-bon-paper>
+                  <div class="bon__head">
+                    <svg viewBox="0 0 608.5 268.5"><use href="#ws-mark"/></svg>
+                    <p class="bon__title">Bauplan-Bon</p>
+                    <p class="bon__meta"><span data-bon-no></span> · <span data-bon-date></span></p>
+                  </div>
+                  <dl class="bon__rows" data-bon-rows></dl>
+                  <p class="bon__total"><span>Richtpreis</span><b data-bon-total></b></p>
+                  <p class="bon__note">Unverbindlich. Kein Angebot, sondern der Startpunkt für unser Gespräch.</p>
+                  <span class="bon__code" data-bon-code></span>
+                </div>
+              </div>
+              <button class="plan__tool plan__tool--text bon__copy" type="button" data-bon-copy>Bauplan als Text kopieren</button>
+            </div>
             <div class="summary__price" aria-live="polite">
               <div data-requires="pricing.types">
                 <p class="summary__price-label">Richtpreis<sup class="fn"><a href="#fn-5" aria-label="Fußnote 5">5</a></sup></p>
@@ -553,7 +572,7 @@
         <ol class="footnotes">
           <li id="fn-1"><a href="#fnref-1" aria-label="Zurück zum Text, Fußnote 1">1.</a><span>Geprüft am 14.11.2026 im Netzwerk-Protokoll des Browsers: Alle Dateien dieser Seite, auch die Schrift, werden von derselben Adresse geladen wie die Seite selbst.</span></li>
           <li id="fn-2"><a href="#fnref-2" aria-label="Zurück zum Text, Fußnote 2">2.</a><span>Geprüft am 14.11.2026: Die Seite setzt keine Cookies und nutzt weder localStorage noch sessionStorage.</span></li>
-          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der acht JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Unkomprimiert 140&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 21.11.2026.</span></li>
+          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der acht JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Unkomprimiert 144&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 21.11.2026.</span></li>
           <li id="fn-4"><a href="#fnref-4" aria-label="Zurück zum Text, Fußnote 4">4.</a><span>Geometrie-Daten des Logos, mit gzip (Stufe 9) komprimiert. Unkomprimiert 760&nbsp;KB. Mit der schwächeren Stufe&nbsp;6, die viele Server nutzen, sind es rund 175&nbsp;KB. Gemessen am 17.11.2026.</span></li>
           <li id="fn-5"><a href="#fnref-5" aria-label="Zurück zum Text, Fußnote 5">5.</a><span>Der Richtpreis ist unverbindlich und ersetzt kein Angebot. Er ergibt sich aus Projektart, Ausgangslage, Umfang und Extras.<span data-requires="pricing.vatNote"> <span data-config="pricing.vatNote"><mark class="ph">[Hinweis netto/brutto]</mark></span></span></span></li>
         </ol>

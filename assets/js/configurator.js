@@ -103,19 +103,23 @@ export function initConfigurator(config, track = () => {}) {
     setSum('scope', s.single ? 'Eine Seite' : s.scope && `${label(s.scope)} · ${config.scopeLabels[s.scope.value]}`);
     setSum('extras', s.extras.map(label).join(', '));
     setSum('time', s.time && label(s.time));
-    if (plan) plan.render(s, changed);
+    updateTotal(s);
+    // Der Bon zeigt Beträge nur, wenn config.js Preise hat; sonst „per E-Mail“
+    if (plan) plan.render(s, changed, { prices: hasPrices, total: totalText, price, money });
+    return s;
+  }
 
-    // Richtpreis: Summe aller gewählten Bausteine
+  // Richtpreis: Summe aller gewählten Bausteine
+  function updateTotal(s) {
     totalText = ON_REQUEST;
-    if (!totalEl) return s;
-    if (!s.type) { totalEl.textContent = '–'; return s; }
+    if (!totalEl) return;
+    if (!s.type) { totalEl.textContent = '–'; return; }
     const parts = [price(`types.${s.type.value}`)];
     if (s.base) parts.push(price(`base.${s.base.value}`));
     if (s.scope) parts.push(price(`scope.${s.scope.value}`));
     for (const e of s.extras) if (e.value !== 'none') parts.push(price(`extras.${e.value}`));
     if (parts.some((v) => v == null)) missing(totalEl, '[RICHTPREIS]');
     else { totalText = `ab ${money.format(parts.reduce((a, b) => a + b, 0))}`; totalEl.textContent = totalText; }
-    return s;
   }
 
   form.addEventListener('change', (e) => {

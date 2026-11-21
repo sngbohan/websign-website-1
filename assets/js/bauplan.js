@@ -116,7 +116,83 @@ export function initBauplan(root, config) {
     if (counter) counter.textContent = n ? `${n + 1} Ebenen` : '1 Ebene';
   }
 
-  function render(s, changed) {
+  // ---------- Bauplan-Bon ----------
+  // Erscheint, sobald alle fünf Schritte gewählt sind: Er „druckt“ aus dem Schlitz. Ändert sich danach etwas,
+  // druckt er neu; fehlt wieder ein Schritt, zieht er sich zurück.
+  const bon = document.querySelector('[data-bon]');
+  const summary = bon?.closest('.summary');
+  const bonRows = bon?.querySelector('[data-bon-rows]');
+  const bonPaper = bon?.querySelector('[data-bon-paper]');
+  let bonKey = '';
+  let bonText = '';
+  let retract = 0;
+  const hash = (str) => [...str].reduce((h, ch) => (Math.imul(h, 31) + ch.charCodeAt(0)) >>> 0, 7);
+
+  function printBon(s, money) {
+    const key = [s.type, s.base, s.scope, ...s.extras, s.time].filter(Boolean).map((i) => `${i.name}=${i.value}`).join('&') + `|${money.total}`;
+    if (key === bonKey) return;
+    bonKey = key;
+    const p = money.prices ? money.price : () => null;
+    const fmt = (v, path) => (v == null ? (money.prices ? 'auf Anfrage' : '✓') : v === 0 ? 'inklusive' : path.startsWith('types.') ? `ab ${money.money.format(v)}` : `+ ${money.money.format(v)}`);
+    const rows = [
+      ['Projektart', s.type.dataset.label, `types.${s.type.value}`],
+      ['Ausgangslage', s.base.dataset.label, `base.${s.base.value}`],
+      ['Umfang', s.single ? 'Eine Seite' : `${s.scope.dataset.label} · ${config.scopeLabels[s.scope.value]}`, s.single ? null : `scope.${s.scope.value}`],
+      ...s.extras.map((e) => [e === s.extras[0] ? 'Extras' : '', e.dataset.label, e.value === 'none' ? null : `extras.${e.value}`]),
+      ['Zeitrahmen', s.time.dataset.label, null],
+    ];
+    bonRows.textContent = '';
+    for (const [k, v, path] of rows) {
+      const row = el('div', 'bon__row');
+      row.append(el('dt', '', k), el('dd', '', v), el('span', 'bon__amt', path ? fmt(p(path), path) : ''));
+      bonRows.append(row);
+    }
+    bon.classList.toggle('bon--noprice', !money.prices);
+    const total = money.prices ? money.total : 'per E-Mail';
+    bon.querySelector('[data-bon-total]').textContent = total;
+    const no = `WS-${String(hash(key) % 10000).padStart(4, '0')}`;
+    const date = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date());
+    bon.querySelector('[data-bon-no]').textContent = no;
+    bon.querySelector('[data-bon-date]').textContent = date;
+    // Strichcode aus der Bon-Nummer: nur Dekoration
+    const code = bon.querySelector('[data-bon-code]');
+    code.textContent = '';
+    let h = hash(no + key);
+    for (let i = 0; i < 46; i++) { h = (Math.imul(h, 1103515245) + 12345) >>> 0; const b = el('i'); b.style.width = `${1 + (h >>> 29) % 3}px`; code.append(b); }
+    bonText = [`Websign · Bauplan-Bon ${no} · ${date}`, '', ...rows.map(([k, v, path]) => `${(k || '').padEnd(13)}${v}${path && money.prices ? ` (${fmt(p(path), path)})` : ''}`), '', `Richtpreis: ${total}`, 'Unverbindlich. Kein Angebot.'].join('\n');
+
+    clearTimeout(retract);
+    bon.hidden = false;
+    bon.classList.remove('is-out');
+    summary?.classList.add('is-printed');
+    bonPaper.classList.remove('is-printing'); void bonPaper.offsetWidth; bonPaper.classList.add('is-printing');
+  }
+
+  function hideBon() {
+    if (!bon || bon.hidden) return;
+    bonKey = '';
+    bon.classList.add('is-out');
+    summary?.classList.remove('is-printed');
+    retract = setTimeout(() => { bon.hidden = true; bon.classList.remove('is-out'); }, 360);
+  }
+
+  bon?.querySelector('[data-bon-copy]').addEventListener('click', async () => {
+    // Erst die Zwischenablage-Schnittstelle; wo sie gesperrt ist (z. B. eingebettete Browser), ein verstecktes Textfeld
+    const fallback = () => {
+      const ta = el('textarea');
+      ta.value = bonText; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+      document.body.append(ta); ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch { ok = false; }
+      ta.remove();
+      return ok;
+    };
+    let ok = false;
+    try { await navigator.clipboard.writeText(bonText); ok = true; } catch { ok = fallback(); }
+    say(ok ? 'Bauplan kopiert. Du kannst ihn überall einfügen.' : 'Kopieren hat nicht geklappt. Die Angaben stehen auch in der Zusammenfassung.');
+  });
+
+  function render(s, changed, money = {}) {
     const type = s.type?.value || null;
     const motion = s.extras.some((e) => e.value === 'motion');
     const branding = s.extras.some((e) => e.value === 'branding');
@@ -158,10 +234,11 @@ export function initBauplan(root, config) {
         else if (t.value === 'motion') say(t.checked ? '3D & Motion: Der Hero bekommt Tiefe.' : '3D & Motion entfernt.');
         else if (t.value === 'branding') say(t.checked ? 'Branding & Logo: Die Marke liegt bei.' : 'Branding & Logo entfernt.');
       } else if (t.name === 'time') say(`Zeitrahmen notiert: ${t.dataset.label}.`);
-      if (keys.every((k) => s.done[k]) && t.name === 'time') say('Fertig geplant. Jetzt fehlt nur noch deine Anfrage.');
+      if (keys.every((k) => s.done[k]) && t.name === 'time') say('Fertig geplant. Dein Bauplan-Bon ist gedruckt.');
     }
     last = { type, motion };
     mirror(changed);
+    if (bon) { if (keys.every((k) => s.done[k])) printBon(s, money); else hideBon(); }
   }
 
   return { render };
