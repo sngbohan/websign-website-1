@@ -226,6 +226,8 @@ for (const m of main.matchAll(/if \(\$\('([^']+)'\)\) (?:near\('[^']+', \(\) => 
 for (const f of pageJs) for (const m of read(f).matchAll(/^import .* from '\.\/([\w-]+\.js)'/gm)) { pageJs.add(`assets/js/${m[1]}`); if (lazyJs.has(f)) lazyJs.add(`assets/js/${m[1]}`); }
 // Dynamische Importe aus geladenen Modulen (z. B. configurator.js → glow-cards.js) laden später: Seite ja, Erstaufruf nein
 for (const f of pageJs) for (const m of read(f).matchAll(/import\('\.\/([\w-]+\.js)'\)/g)) { const d = `assets/js/${m[1]}`; if (f !== 'assets/js/main.js') { pageJs.add(d); lazyJs.add(d); } }
+// Gemeinsame Chunks der React-Inseln (esbuild --splitting, minifiziert: import{…}from"./chunks/x.js"): laden mit ihrem Modul
+for (const f of pageJs) for (const m of read(f).matchAll(/from\s*["']\.\/(chunks\/[\w-]+\.js)["']/g)) { const c = `assets/js/${m[1]}`; pageJs.add(c); if (lazyJs.has(f)) lazyJs.add(c); }
 const pageJsGzip = [...pageJs].reduce((n, f) => n + gz(f), 0);
 const pageJsRaw = [...pageJs].reduce((n, f) => n + raw(f), 0);
 const allJsGzip = js.reduce((n, f) => n + gz(f), 0);

@@ -278,7 +278,7 @@
         <div class="lockup">
           <p class="t-eyebrow" data-reveal-item>Nachmessbar</p>
           <h2 class="t-headline-xl" data-reveal-item>Diese Seite ist der Beweis.</h2>
-          <p class="t-intro" data-reveal-item>Wir versprechen nichts, was wir hier nicht zeigen. <strong>Alles auf dieser Seite ist selbst gestaltet und selbst programmiert,</strong> ohne Baukasten. Die einzige Bibliothek ist React, und die lädt nur für die leuchtenden Karten im Konfigurator. Die Zahlen dazu kannst du in deinem Browser nachprüfen.</p>
+          <p class="t-intro" data-reveal-item>Wir versprechen nichts, was wir hier nicht zeigen. <strong>Alles auf dieser Seite ist selbst gestaltet und selbst programmiert,</strong> ohne Baukasten. Die einzige Bibliothek ist React, und die lädt erst, wenn das Karussell oder der Konfigurator näher kommt. Die Zahlen dazu kannst du in deinem Browser nachprüfen.</p>
         </div>
         <div class="stat-panel" data-theme="dark">
           <dl class="stats">
@@ -294,8 +294,8 @@
             </div>
             <div class="stat" data-reveal-item>
               <dt class="stat__eyebrow">JavaScript gesamt</dt>
-              <dd class="stat__value">122&nbsp;KB</dd>
-              <dd class="stat__label">Für Navigation, Animation, 3D, Glas-Logo, Glas-Button, Projektordner, Konfigurator, Bauplan und leuchtende Karten zusammen. Davon 70&nbsp;KB React, nur mit Maus und erst im Konfigurator.<sup class="fn"><a href="#fn-3" id="fnref-3" aria-label="Fußnote 3">3</a></sup></dd>
+              <dd class="stat__value">128&nbsp;KB</dd>
+              <dd class="stat__label">Für Navigation, Animation, 3D, Glas-Logo, Glas-Button, Projektordner, Karussell, Konfigurator, Bauplan und leuchtende Karten zusammen. Davon 67&nbsp;KB React, das erst lädt, wenn das Karussell oder der Konfigurator näher kommt.<sup class="fn"><a href="#fn-3" id="fnref-3" aria-label="Fußnote 3">3</a></sup></dd>
             </div>
             <div class="stat" data-reveal-item>
               <dt class="stat__eyebrow">3D-Modell</dt>
@@ -304,6 +304,31 @@
             </div>
           </dl>
         </div>
+      </div>
+    </section>
+
+    <!-- 7b · Was diese Seite kann: Linsen-Karussell (React-Insel aus src/curved-carousel.tsx, lädt über main.js, sobald der
+         Abschnitt näher kommt). Die Folien stehen als JSON im Skript-Block; ohne JavaScript bleibt die Liste darunter sichtbar.
+         Bilder: Ausschnitte dieser Seite, 720 × 900 px (assets/media/karussell/). -->
+    <section class="lens-section" data-theme="dark" data-section="karussell" aria-labelledby="karussell-title">
+      <h2 class="sr-only" id="karussell-title">Was diese Seite kann.</h2>
+      <div class="lens" data-lens-carousel data-label="Was diese Seite kann" data-hint="Zum Blättern ziehen" data-height="100svh">
+        <script type="application/json">
+          [
+            { "kicker": "Echtzeit-3D", "title": "Zum Anfassen", "caption": "Das Logo als Modell, das dein Browser live berechnet. Kein Video.", "image": "assets/media/karussell/3d-logo.webp", "alt": "3D-Ansicht des Websign-Logos in Chrom mit Materialauswahl" },
+            { "kicker": "Glas-Logo", "title": "Erster Eindruck", "caption": "Ein Logo unter Glas, das beim Scrollen nach oben rückt.", "image": "assets/media/karussell/glas-logo.webp", "alt": "Websign-Logo unter Glas über dem Schriftzug WEBSIGN" },
+            { "kicker": "Scroll-Szene", "title": "Leistungen in Bewegung", "caption": "Beim Scrollen wechseln Text und Bühne Schritt für Schritt.", "image": "assets/media/karussell/scroll-szene.webp", "alt": "Scroll-Szene mit großem WS-Zeichen und dem Text „Erst die Marke.“" },
+            { "kicker": "Projektordner", "title": "Zum Aufklappen", "caption": "Arbeiten liegen in Glasordnern. Ein Klick öffnet sie.", "image": "assets/media/karussell/projektordner.webp", "alt": "Projekte als gläserne Ordner" },
+            { "kicker": "Konfigurator", "title": "Fünf Schritte zur Anfrage", "caption": "Mit jeder Auswahl wächst der Bauplan deiner Website.", "image": "assets/media/karussell/konfigurator.webp", "alt": "Konfigurator mit Auswahlkarten für die Projektart" }
+          ]
+        </script>
+        <ul class="lens__fallback">
+          <li><img src="assets/media/karussell/3d-logo.webp" alt="3D-Ansicht des Websign-Logos in Chrom mit Materialauswahl" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Zum Anfassen</h3><p>Das Logo als Modell, das dein Browser live berechnet. Kein Video.</p></li>
+          <li><img src="assets/media/karussell/glas-logo.webp" alt="Websign-Logo unter Glas über dem Schriftzug WEBSIGN" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Erster Eindruck</h3><p>Ein Logo unter Glas, das beim Scrollen nach oben rückt.</p></li>
+          <li><img src="assets/media/karussell/scroll-szene.webp" alt="Scroll-Szene mit großem WS-Zeichen und dem Text „Erst die Marke.“" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Leistungen in Bewegung</h3><p>Beim Scrollen wechseln Text und Bühne Schritt für Schritt.</p></li>
+          <li><img src="assets/media/karussell/projektordner.webp" alt="Projekte als gläserne Ordner" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Zum Aufklappen</h3><p>Arbeiten liegen in Glasordnern. Ein Klick öffnet sie.</p></li>
+          <li><img src="assets/media/karussell/konfigurator.webp" alt="Konfigurator mit Auswahlkarten für die Projektart" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Fünf Schritte zur Anfrage</h3><p>Mit jeder Auswahl wächst der Bauplan deiner Website.</p></li>
+        </ul>
       </div>
     </section>
 
@@ -577,7 +602,7 @@
         <ol class="footnotes">
           <li id="fn-1"><a href="#fnref-1" aria-label="Zurück zum Text, Fußnote 1">1.</a><span>Geprüft am 14.11.2026 im Netzwerk-Protokoll des Browsers: Alle Dateien dieser Seite, auch die Schrift, werden von derselben Adresse geladen wie die Seite selbst.</span></li>
           <li id="fn-2"><a href="#fnref-2" aria-label="Zurück zum Text, Fußnote 2">2.</a><span>Geprüft am 14.11.2026: Die Seite setzt keine Cookies und nutzt weder localStorage noch sessionStorage.</span></li>
-          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der neun JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Drei davon (Konfigurator, Bauplan, leuchtende Karten mit React) laden erst, wenn der Konfigurator näher kommt; die leuchtenden Karten nur auf Geräten mit Maus. Unkomprimiert 365&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 21.11.2026.</span></li>
+          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der elf JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Fünf davon laden erst, wenn ihr Abschnitt näher kommt: das Karussell, Konfigurator und Bauplan, die leuchtenden Karten und React, das sich Karussell und Karten teilen; die leuchtenden Karten nur auf Geräten mit Maus. Unkomprimiert 379&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 22.11.2026.</span></li>
           <li id="fn-4"><a href="#fnref-4" aria-label="Zurück zum Text, Fußnote 4">4.</a><span>Geometrie-Daten des Logos, mit gzip (Stufe 9) komprimiert. Unkomprimiert 760&nbsp;KB. Mit der schwächeren Stufe&nbsp;6, die viele Server nutzen, sind es rund 175&nbsp;KB. Gemessen am 17.11.2026.</span></li>
           <li id="fn-5"><a href="#fnref-5" aria-label="Zurück zum Text, Fußnote 5">5.</a><span>Der Richtpreis ist unverbindlich und ersetzt kein Angebot. Er ergibt sich aus Projektart, Ausgangslage, Umfang und Extras.<span data-requires="pricing.vatNote"> <span data-config="pricing.vatNote"><mark class="ph">[Hinweis netto/brutto]</mark></span></span></span></li>
         </ol>

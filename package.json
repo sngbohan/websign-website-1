@@ -5,7 +5,7 @@
   "description": "Websign. Die Seite selbst braucht keinen Build. Nur die React-Inseln (src/) werden gebündelt: npm run build.",
   "scripts": {
     "build": "npm run build:js && npm run build:css",
-    "build:js": "esbuild src/glow-cards.tsx --bundle --format=esm --minify --target=es2020 --legal-comments=none --define:process.env.NODE_ENV='\"production\"' --outfile=assets/js/glow-cards.js",
+    "build:js": "node -e \"require('fs').rmSync('assets/js/chunks',{recursive:true,force:true})\" && esbuild src/glow-cards.tsx src/curved-carousel.tsx --bundle --splitting --format=esm --minify --target=es2020 --legal-comments=none --define:process.env.NODE_ENV='\"production\"' --outdir=assets/js --chunk-names=chunks/[name]-[hash]",
     "build:css": "tailwindcss -i src/glow-cards.css -o assets/css/glow-cards.css --minify",
     "typecheck": "tsc --noEmit",
     "check": "node tools/check.mjs"

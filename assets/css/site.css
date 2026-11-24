@@ -343,6 +343,15 @@ p + p { margin-top: 0.8em; }
 .no-webgl .viewer__controls, .no-webgl .viewer__hint, .no-webgl .viewer__material, .no-js .viewer__controls, .no-js .viewer__material { display: none; }
 .limit { margin-top: 20px; color: var(--text-secondary); font-size: var(--body-s-size); line-height: var(--body-s-line); letter-spacing: var(--body-s-track); }
 
+/* ---------- Linsen-Karussell „Was diese Seite kann“ (React-Insel, Komponente bringt ihr eigenes CSS mit) ---------- */
+.lens-section { position: relative; background: var(--ink); color: var(--text-primary); }
+.lens { min-height: 100svh; }                              /* = Bühnenhöhe: Beim Einhängen springt nichts */
+.lens .clc-top { top: calc(var(--nav-height) + 20px); }    /* Beschriftung unter der festen Navigation */
+@media (max-width: 640px) { .lens .clc-top span { display: none; } }   /* schmal: nur die Beschriftung, kein Hinweis daneben */
+.lens__fallback { width: var(--band); margin-inline: auto; padding-block: var(--section-pad); list-style: none; display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.lens__fallback img { display: block; width: 100%; height: auto; margin-bottom: 16px; border-radius: var(--r-tile); }
+.lens__fallback p { margin-top: 8px; color: var(--text-secondary); }
+
 /* ---------- Scroll-Galerie ---------- */
 .gallery-wrap { position: relative; }
 /* position: relative macht die Galerie zum Bezugsrahmen für absolut positionierte Kinder (z. B. die sr-only-Texte
