@@ -417,9 +417,12 @@ export function createFolder(project, opts = {}) {
       svg('stop', { offset: '1', 'stop-color': '#fff', 'stop-opacity': '0.12' }))),
     svg('path', { d: FRONT_PATH, stroke: `url(#${gid})` }));
   const hit = el('button', { type: 'button', class: 'gf-hit', 'aria-expanded': 'false' });
-  const title = el('span', { class: 'gf-title', text: label });
+  const title = el('span', { class: 'gf-title', text: label.replace(/^Projekt /, '') });   // auf dem Ordner nur die Nummer
   const metaEl = el('span', { class: 'gf-meta', text: meta });
   front.append(el('div', { class: 'gf-tint', 'aria-hidden': 'true' }), el('div', { class: 'gf-spec', 'aria-hidden': 'true' }), frontRim, hit, el('div', { class: 'gf-label' }, title, metaEl));
+
+  // Mattes Websign-Zeichen auf dem freien Platz der Scheibe (Lage je nach Beschriftung, siehe CSS)
+  front.append(svg('svg', { class: 'gf-logo', viewBox: '0 0 608.5 268.5', 'aria-hidden': 'true' }, svg('use', { href: '#ws-mark' })));
 
   // Dateien: im Tab-Ablauf nach dem Glas, auf dem Bildschirm dahinter. Die erste Datei liegt vorn.
   // Ein Klick auf eine Datei öffnet sie groß in der Dateiansicht.
@@ -549,7 +552,7 @@ export function initFolders(config, track = () => {}) {
   const named = real && config.showProjectNames === true;
   listEl.textContent = '';
   const folders = projects.map((p, i) => {
-    const f = createFolder(p, { label: named ? null : `Projekt ${i + 1}`, delay: (i % 3) * 140, track });
+    const f = createFolder(p, { label: named ? null : `Projekt ${String(i + 1).padStart(3, '0')}`, delay: (i % 3) * 140, track });
     listEl.append(el('li', { class: 'folders__item' }, f.node));
     return f;
   });

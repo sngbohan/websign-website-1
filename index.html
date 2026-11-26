@@ -142,6 +142,51 @@
       </div>
     </section>
 
+    <!-- 1b · Was diese Seite kann: Linsen-Karussell (React-Insel aus src/curved-carousel.tsx, lädt über main.js, sobald der
+         Abschnitt näher kommt). Die Folien stehen als JSON im Skript-Block; ohne JavaScript bleibt die Liste darunter sichtbar.
+         Bilder vorerst Platzhalter (assets/media/platzhalter/ws-3d-babyblau.svg). -->
+    <section class="lens-section" data-theme="dark" data-section="karussell" aria-labelledby="karussell-title">
+      <h2 class="sr-only" id="karussell-title">Was diese Seite kann.</h2>
+      <div class="lens" data-lens-carousel data-label="Was diese Seite kann" data-hint="Zum Blättern ziehen" data-height="100svh">
+        <script type="application/json">
+          [
+            { "kicker": "Echtzeit-3D", "title": "Zum Anfassen", "caption": "Das Logo als Modell, das dein Browser live berechnet. Kein Video.", "image": "assets/media/platzhalter/ws-3d-babyblau.svg", "alt": "Platzhalter: babyblaues Websign-Logo" },
+            { "kicker": "Glas-Logo", "title": "Erster Eindruck", "caption": "Ein Logo unter Glas, das beim Scrollen nach oben rückt.", "image": "assets/media/platzhalter/ws-3d-babyblau.svg", "alt": "Platzhalter: babyblaues Websign-Logo" },
+            { "kicker": "Scroll-Szene", "title": "Leistungen in Bewegung", "caption": "Beim Scrollen wechseln Text und Bühne Schritt für Schritt.", "image": "assets/media/platzhalter/ws-3d-babyblau.svg", "alt": "Platzhalter: babyblaues Websign-Logo" },
+            { "kicker": "Projektordner", "title": "Zum Aufklappen", "caption": "Arbeiten liegen in Glasordnern. Ein Klick öffnet sie.", "image": "assets/media/platzhalter/ws-3d-babyblau.svg", "alt": "Platzhalter: babyblaues Websign-Logo" },
+            { "kicker": "Konfigurator", "title": "Fünf Schritte zur Anfrage", "caption": "Mit jeder Auswahl wächst der Bauplan deiner Website.", "image": "assets/media/platzhalter/ws-3d-babyblau.svg", "alt": "Platzhalter: babyblaues Websign-Logo" }
+          ]
+        </script>
+        <ul class="lens__fallback">
+          <li><img src="assets/media/platzhalter/ws-3d-babyblau.svg" alt="Platzhalter: babyblaues Websign-Logo" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Zum Anfassen</h3><p>Das Logo als Modell, das dein Browser live berechnet. Kein Video.</p></li>
+          <li><img src="assets/media/platzhalter/ws-3d-babyblau.svg" alt="Platzhalter: babyblaues Websign-Logo" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Erster Eindruck</h3><p>Ein Logo unter Glas, das beim Scrollen nach oben rückt.</p></li>
+          <li><img src="assets/media/platzhalter/ws-3d-babyblau.svg" alt="Platzhalter: babyblaues Websign-Logo" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Leistungen in Bewegung</h3><p>Beim Scrollen wechseln Text und Bühne Schritt für Schritt.</p></li>
+          <li><img src="assets/media/platzhalter/ws-3d-babyblau.svg" alt="Platzhalter: babyblaues Websign-Logo" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Zum Aufklappen</h3><p>Arbeiten liegen in Glasordnern. Ein Klick öffnet sie.</p></li>
+          <li><img src="assets/media/platzhalter/ws-3d-babyblau.svg" alt="Platzhalter: babyblaues Websign-Logo" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Fünf Schritte zur Anfrage</h3><p>Mit jeder Auswahl wächst der Bauplan deiner Website.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 1c · Video-Szene „Studio-Glastür“: Scrollen spult das Video, die Seite steht so lange still (assets/js/video-scrub.js,
+         lädt über main.js, sobald der Abschnitt näher kommt). Ohne JavaScript oder bei reduzierter Bewegung: Standbild mit Titel.
+         Video mit Higgsfield erzeugt (Seedance 2.5), Vorlagen und Prompts liegen außerhalb des Repos im Ordner storyboard-studio. -->
+    <section class="vscrub" data-theme="dark" data-section="video-szene" aria-labelledby="vscrub-title" data-scrub-video data-scrub-distance="3600">
+      <div class="vscrub__stage">
+        <video data-src="assets/media/video/websign-studio-1080.mp4" poster="assets/media/video/websign-studio-1080.jpg" width="1920" height="1080" muted playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      </div>
+      <div class="vscrub__veil" aria-hidden="true"></div>
+      <div class="vscrub__title">
+        <h2 class="t-headline-xl" id="vscrub-title">So könnte deine Website aussehen.</h2>
+      </div>
+      <p class="sr-only">Das Video zeigt ein helles Design-Studio am Abend. Auf dem Bildschirm ist die Websign-Seite geöffnet. Eine raumhohe Glastür gleitet auf, die Kamera fährt über einen Pool hinaus und bleibt mit Blick auf eine palmengesäumte Straße stehen, die sich in der Dämmerung den Hang hinunterschwingt.</p>
+      <div class="vscrub__tagline" aria-hidden="true"><p class="t-subhead">Vom ersten Satz bis zum Launch.</p></div>
+      <div class="vscrub__hint" aria-hidden="true">
+        <span>Scrollen</span>
+        <svg viewBox="0 0 14 18" width="14" height="18"><path d="M7 1v16M2 12l5 5 5-5"/></svg>
+      </div>
+      <div class="vscrub__bar" aria-hidden="true"><i></i></div>
+    </section>
+
     <!-- 2 · Anspruch -->
     <section class="section" data-theme="dark" data-section="anspruch" data-reveal>
       <div class="band lockup">
@@ -158,6 +203,18 @@
         <div class="stage" data-stage="services">
           <div class="scene__figure">
             <div class="scene__grid" aria-hidden="true"></div>
+            <!-- Erst die Marke: das Zeichen als Entwurfszeichnung, bevor es ab Schritt 2 räumlich wird -->
+            <svg class="scene__sketch" viewBox="0 0 608.5 268.5" aria-hidden="true">
+              <defs>
+                <pattern id="sk-hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><path d="M0 0V9" stroke="currentColor" stroke-width="1" opacity=".22"/></pattern>
+                <filter id="sk-hand" x="-5%" y="-10%" width="110%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="6"/></filter>
+              </defs>
+              <g class="sk-guides"><circle cx="56" cy="56" r="55"/><path d="M48 56h16M56 48v16"/><circle cx="138" cy="213" r="55"/><path d="M130 213h16M138 205v16"/><circle cx="250" cy="56" r="55"/><path d="M242 56h16M250 48v16"/><circle cx="333" cy="213" r="55"/><path d="M325 213h16M333 205v16"/><circle cx="535" cy="213" r="55"/><path d="M527 213h16M535 205v16"/><circle cx="553" cy="56" r="55"/><path d="M545 56h16M553 48v16"/><path d="M-30 1H640M-30 267.5H640M15 -35L180 303M205 -35L375 303"/></g>
+              <g fill="url(#sk-hatch)"><use href="#ws-mark" width="608.5" height="268.5"/></g>
+              <g class="sk-line" filter="url(#sk-hand)"><use href="#ws-mark" width="608.5" height="268.5"/><g class="sk-line--2" transform="translate(2.5 -2)"><use href="#ws-mark" width="608.5" height="268.5"/></g></g>
+              <g class="sk-points"><rect x="50" y="-3" width="8" height="8"/><rect x="-3" y="54" width="8" height="8"/><rect x="84" y="237" width="8" height="8"/><rect x="133" y="263" width="8" height="8"/><rect x="218" y="183" width="8" height="8"/><rect x="294" y="263" width="8" height="8"/><rect x="532" y="263" width="8" height="8"/><rect x="603" y="188" width="8" height="8"/></g>
+              <g class="sk-notes"><path d="M0 296H608M0 289v14M608 289v14"/><text x="304" y="320" text-anchor="middle">B = 608</text><text x="-6" y="-20">ENTWURF 01</text><text x="76" y="-20" dx="70">r = 55</text></g>
+            </svg>
             <svg class="stage__mark" viewBox="0 0 608.5 268.5" aria-hidden="true"><use href="#ws-mark"/></svg>
           </div>
         </div>
@@ -259,13 +316,13 @@
         </div>
         <ul class="folders" aria-label="Projekte" data-folders>
           <li class="folders__fallback">
-            <h3 class="t-card">Projekt 1</h3>
+            <h3 class="t-card">001</h3>
           </li>
           <li class="folders__fallback">
-            <h3 class="t-card">Projekt 2</h3>
+            <h3 class="t-card">002</h3>
           </li>
           <li class="folders__fallback">
-            <h3 class="t-card">Projekt 3</h3>
+            <h3 class="t-card">003</h3>
           </li>
         </ul>
         <p class="folders__hint t-body-s" aria-hidden="true">Klick auf einen Ordner, um ihn zu öffnen, und auf eine Datei, um sie anzusehen.</p>
@@ -294,8 +351,8 @@
             </div>
             <div class="stat" data-reveal-item>
               <dt class="stat__eyebrow">JavaScript gesamt</dt>
-              <dd class="stat__value">128&nbsp;KB</dd>
-              <dd class="stat__label">Für Navigation, Animation, 3D, Glas-Logo, Glas-Button, Projektordner, Karussell, Konfigurator, Bauplan und leuchtende Karten zusammen. Davon 67&nbsp;KB React, das erst lädt, wenn das Karussell oder der Konfigurator näher kommt.<sup class="fn"><a href="#fn-3" id="fnref-3" aria-label="Fußnote 3">3</a></sup></dd>
+              <dd class="stat__value">133&nbsp;KB</dd>
+              <dd class="stat__label">Für Navigation, Animation, 3D, Glas-Logo, Glas-Button, Projektordner, Karussell, Video-Szene, Konfigurator, Bauplan und leuchtende Karten zusammen. Davon 67&nbsp;KB React, das erst lädt, wenn das Karussell oder der Konfigurator näher kommt.<sup class="fn"><a href="#fn-3" id="fnref-3" aria-label="Fußnote 3">3</a></sup></dd>
             </div>
             <div class="stat" data-reveal-item>
               <dt class="stat__eyebrow">3D-Modell</dt>
@@ -304,31 +361,6 @@
             </div>
           </dl>
         </div>
-      </div>
-    </section>
-
-    <!-- 7b · Was diese Seite kann: Linsen-Karussell (React-Insel aus src/curved-carousel.tsx, lädt über main.js, sobald der
-         Abschnitt näher kommt). Die Folien stehen als JSON im Skript-Block; ohne JavaScript bleibt die Liste darunter sichtbar.
-         Bilder: Ausschnitte dieser Seite, 720 × 900 px (assets/media/karussell/). -->
-    <section class="lens-section" data-theme="dark" data-section="karussell" aria-labelledby="karussell-title">
-      <h2 class="sr-only" id="karussell-title">Was diese Seite kann.</h2>
-      <div class="lens" data-lens-carousel data-label="Was diese Seite kann" data-hint="Zum Blättern ziehen" data-height="100svh">
-        <script type="application/json">
-          [
-            { "kicker": "Echtzeit-3D", "title": "Zum Anfassen", "caption": "Das Logo als Modell, das dein Browser live berechnet. Kein Video.", "image": "assets/media/karussell/3d-logo.webp", "alt": "3D-Ansicht des Websign-Logos in Chrom mit Materialauswahl" },
-            { "kicker": "Glas-Logo", "title": "Erster Eindruck", "caption": "Ein Logo unter Glas, das beim Scrollen nach oben rückt.", "image": "assets/media/karussell/glas-logo.webp", "alt": "Websign-Logo unter Glas über dem Schriftzug WEBSIGN" },
-            { "kicker": "Scroll-Szene", "title": "Leistungen in Bewegung", "caption": "Beim Scrollen wechseln Text und Bühne Schritt für Schritt.", "image": "assets/media/karussell/scroll-szene.webp", "alt": "Scroll-Szene mit großem WS-Zeichen und dem Text „Erst die Marke.“" },
-            { "kicker": "Projektordner", "title": "Zum Aufklappen", "caption": "Arbeiten liegen in Glasordnern. Ein Klick öffnet sie.", "image": "assets/media/karussell/projektordner.webp", "alt": "Projekte als gläserne Ordner" },
-            { "kicker": "Konfigurator", "title": "Fünf Schritte zur Anfrage", "caption": "Mit jeder Auswahl wächst der Bauplan deiner Website.", "image": "assets/media/karussell/konfigurator.webp", "alt": "Konfigurator mit Auswahlkarten für die Projektart" }
-          ]
-        </script>
-        <ul class="lens__fallback">
-          <li><img src="assets/media/karussell/3d-logo.webp" alt="3D-Ansicht des Websign-Logos in Chrom mit Materialauswahl" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Zum Anfassen</h3><p>Das Logo als Modell, das dein Browser live berechnet. Kein Video.</p></li>
-          <li><img src="assets/media/karussell/glas-logo.webp" alt="Websign-Logo unter Glas über dem Schriftzug WEBSIGN" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Erster Eindruck</h3><p>Ein Logo unter Glas, das beim Scrollen nach oben rückt.</p></li>
-          <li><img src="assets/media/karussell/scroll-szene.webp" alt="Scroll-Szene mit großem WS-Zeichen und dem Text „Erst die Marke.“" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Leistungen in Bewegung</h3><p>Beim Scrollen wechseln Text und Bühne Schritt für Schritt.</p></li>
-          <li><img src="assets/media/karussell/projektordner.webp" alt="Projekte als gläserne Ordner" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Zum Aufklappen</h3><p>Arbeiten liegen in Glasordnern. Ein Klick öffnet sie.</p></li>
-          <li><img src="assets/media/karussell/konfigurator.webp" alt="Konfigurator mit Auswahlkarten für die Projektart" width="720" height="900" loading="lazy" decoding="async"><h3 class="t-card">Fünf Schritte zur Anfrage</h3><p>Mit jeder Auswahl wächst der Bauplan deiner Website.</p></li>
-        </ul>
       </div>
     </section>
 
@@ -602,7 +634,7 @@
         <ol class="footnotes">
           <li id="fn-1"><a href="#fnref-1" aria-label="Zurück zum Text, Fußnote 1">1.</a><span>Geprüft am 14.11.2026 im Netzwerk-Protokoll des Browsers: Alle Dateien dieser Seite, auch die Schrift, werden von derselben Adresse geladen wie die Seite selbst.</span></li>
           <li id="fn-2"><a href="#fnref-2" aria-label="Zurück zum Text, Fußnote 2">2.</a><span>Geprüft am 14.11.2026: Die Seite setzt keine Cookies und nutzt weder localStorage noch sessionStorage.</span></li>
-          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der elf JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Fünf davon laden erst, wenn ihr Abschnitt näher kommt: das Karussell, Konfigurator und Bauplan, die leuchtenden Karten und React, das sich Karussell und Karten teilen; die leuchtenden Karten nur auf Geräten mit Maus. Unkomprimiert 379&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 22.11.2026.</span></li>
+          <li id="fn-3"><a href="#fnref-3" aria-label="Zurück zum Text, Fußnote 3">3.</a><span>Summe der zwölf JavaScript-Dateien, die diese Seite lädt, mit gzip (Stufe 9) komprimiert. Sechs davon laden erst, wenn ihr Abschnitt näher kommt: das Karussell, die Video-Szene, Konfigurator und Bauplan, die leuchtenden Karten und React, das sich Karussell und Karten teilen; die leuchtenden Karten nur auf Geräten mit Maus. Unkomprimiert 393&nbsp;KB. Je nach Server weicht die übertragene Größe um wenige Prozent ab. Gemessen am 26.11.2026.</span></li>
           <li id="fn-4"><a href="#fnref-4" aria-label="Zurück zum Text, Fußnote 4">4.</a><span>Geometrie-Daten des Logos, mit gzip (Stufe 9) komprimiert. Unkomprimiert 760&nbsp;KB. Mit der schwächeren Stufe&nbsp;6, die viele Server nutzen, sind es rund 175&nbsp;KB. Gemessen am 17.11.2026.</span></li>
           <li id="fn-5"><a href="#fnref-5" aria-label="Zurück zum Text, Fußnote 5">5.</a><span>Der Richtpreis ist unverbindlich und ersetzt kein Angebot. Er ergibt sich aus Projektart, Ausgangslage, Umfang und Extras.<span data-requires="pricing.vatNote"> <span data-config="pricing.vatNote"><mark class="ph">[Hinweis netto/brutto]</mark></span></span></span></li>
         </ol>

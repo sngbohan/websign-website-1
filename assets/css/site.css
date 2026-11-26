@@ -236,6 +236,13 @@ p + p { margin-top: 0.8em; }
 .scene .stage { position: relative; inset: auto; height: 46vh; min-height: 280px; }
 .scene__figure { position: absolute; left: 50%; top: 50%; width: min(70%, 620px); aspect-ratio: 608.5 / 268.5; transform: translate(-50%, -50%); }
 .scene__figure .stage__mark { width: 100%; height: 100%; color: var(--on-dark); }
+.scene__sketch { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; color: var(--on-dark); fill: none; opacity: var(--sketch, 1); pointer-events: none; }
+.scene__figure > .stage__mark { visibility: hidden; }
+.sk-guides, .sk-notes path { stroke: #6f8fce; stroke-width: 1; opacity: .55; vector-effect: non-scaling-stroke; }
+.sk-line { stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.sk-line--2 { opacity: .35; }
+.sk-points { fill: var(--surface); stroke: #8fb0f0; stroke-width: 1.5; }
+.sk-notes text { fill: #8fa8d8; font: 12px ui-monospace, Menlo, monospace; letter-spacing: .08em; }
 .scene__grid {
   position: absolute; inset: -22% 0; opacity: var(--grid, 0); pointer-events: none;
   background-image: linear-gradient(to right, var(--line) 1px, transparent 1px); background-size: calc(100% / 12) 100%;
@@ -351,6 +358,36 @@ p + p { margin-top: 0.8em; }
 .lens__fallback { width: var(--band); margin-inline: auto; padding-block: var(--section-pad); list-style: none; display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 .lens__fallback img { display: block; width: 100%; height: auto; margin-bottom: 16px; border-radius: var(--r-tile); }
 .lens__fallback p { margin-top: 8px; color: var(--text-secondary); }
+
+/* ---------- Video-Szene „So könnte deine Website aussehen“ (video-scrub.js) ----------
+   Ohne .vscrub--live (kein JS, reduzierte Bewegung, Video lädt nicht): Standbild mit abgedunkeltem Titel. */
+.vscrub { position: relative; height: 100vh; height: 100dvh; min-height: 420px; overflow: hidden; background: var(--ink); color: var(--on-dark); }
+.vscrub__stage { position: absolute; inset: var(--nav-height) 0 0; }   /* unter der festen Navigation: nichts vom Video verdeckt */
+.vscrub video { display: block; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 50%; }
+@media (min-aspect-ratio: 2/1) { .vscrub video { object-fit: contain; } }   /* ultrabreit: nichts oben/unten abschneiden. Hochformat füllt den Schirm: Tür, Pool und Straße liegen genau in der Mitte */
+.vscrub--live video { will-change: transform; }
+.vscrub__veil { position: absolute; inset: 0; pointer-events: none; background: rgba(5, 7, 12, 0.6); }
+/* Live: weicher Schleier, damit der weiße Text auf dem hellen Studio lesbar bleibt. Deckkraft setzt video-scrub.js. */
+.vscrub--live .vscrub__veil { opacity: 0; background: radial-gradient(120% 90% at 50% 55%, rgba(5, 7, 12, 0.62), rgba(5, 7, 12, 0.38) 70%), linear-gradient(transparent 55%, rgba(5, 7, 12, 0.35)); }
+.vscrub__title, .vscrub__tagline { position: absolute; inset-inline: 0; padding-inline: max(16px, 6%); text-align: center; pointer-events: none; }
+.vscrub__title { inset-block: var(--nav-height) 0; display: grid; place-items: center; }
+.vscrub__title h2 { max-width: 14em; text-wrap: balance; text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); }
+.vscrub__tagline { bottom: clamp(56px, 16vh, 160px); opacity: 0; }
+.vscrub__tagline p { color: var(--brand-ice); text-wrap: balance; }
+.vscrub--live .vscrub__title, .vscrub--live .vscrub__tagline { will-change: transform, filter, opacity; }
+.vscrub__hint {
+  position: absolute; left: 50%; bottom: clamp(20px, 6vh, 48px); transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none;
+  font-size: var(--caption-size); font-weight: var(--weight-medium); letter-spacing: 0.3em; text-transform: uppercase; color: var(--on-dark); opacity: 0.75;
+  transition: opacity 0.4s var(--ease-ws-ui);
+}
+.vscrub__hint.is-gone { opacity: 0; }
+.vscrub__hint svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; animation: vscrub-bounce 1.6s ease-in-out infinite; }
+@keyframes vscrub-bounce { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(5px); opacity: 1; } }
+.vscrub__bar { position: absolute; inset: auto 0 0; height: 2px; background: rgba(255, 255, 255, 0.12); }
+.vscrub__bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--brand-blue), var(--brand-ice)); transform: scaleX(0); transform-origin: 0 50%; }
+.vscrub:not(.vscrub--live) :is(.vscrub__tagline, .vscrub__hint, .vscrub__bar) { display: none; }
+:root:has(.vscrub.is-locked) { overscroll-behavior: none; }   /* kein Gummiband und kein Neuladen per Wischen, solange das Video läuft */
 
 /* ---------- Scroll-Galerie ---------- */
 .gallery-wrap { position: relative; }

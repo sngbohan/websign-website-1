@@ -385,6 +385,9 @@ export async function initScenes() {
       }
       if (reduced) p = p < 0.33 ? 0.1 : p < 0.66 ? 0.5 : 1;
       // 1 flaches Zeichen · 2 es löst sich in ein Drahtgitter auf, wölbt sich und dreht · 3 eine Chrom-Welle überzieht es
+      // In Schritt 1 zeigt die Seite die Entwurfszeichnung (SVG), das 3D-Zeichen blendet danach darüber ein
+      t.opacity = smooth(0.23, 0.29, p);
+      sceneEl?.style.setProperty('--sketch', (1 - t.opacity).toFixed(3));
       t.wire = smooth(0.24, 0.34, p);
       t.flat = 1 - smooth(0.26, 0.36, p);
       t.inflate = 0.02 + 0.98 * smooth(0.30, 0.46, p);

@@ -163,10 +163,12 @@ canvas.gf-sheet-art[data-ready] { opacity: 1; filter: none; }
 .gf-front:has(.gf-hit:focus-visible) .gf-front-rim path { stroke-width: 5; }
 .gf-front:has(.gf-hit:focus-visible) .gf-front-rim { opacity: 1; }
 
-.gf-label { position: absolute; z-index: 2; display: flex; flex-direction: column; gap: 4px; max-width: 220px; pointer-events: none; color: var(--gf-ink); }
-.gf-root[data-place="bottom-left"] .gf-label { left: 28px; bottom: 32px; }
-.gf-root[data-place="top-left"] .gf-label { left: 28px; top: 34px; }
-.gf-root[data-place="top-right"] .gf-label { right: 32px; top: 52px; align-items: flex-start; }
+.gf-logo { position: absolute; z-index: 2; left: 34px; width: 132px; height: auto; aspect-ratio: 608.5 / 268.5; pointer-events: none; fill: rgba(255, 255, 255, .2); filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .25)); }
+.gf-root[data-tone="light"] .gf-logo { fill: rgba(29, 29, 31, .13); filter: drop-shadow(0 1px 0 rgba(255, 255, 255, .8)); }
+/* Bei allen Ordnern gleich: Zeichen links, Beschriftung rechts daneben */
+.gf-logo { top: 88px; }
+.gf-label { position: absolute; left: 190px; right: 20px; top: 96px; z-index: 2; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; pointer-events: none; color: var(--gf-ink); }
+.gf-label .gf-title, .gf-label .gf-meta { text-transform: uppercase; letter-spacing: .06em; }
 .gf-title { font-size: 20px; line-height: 24px; font-weight: var(--weight-bold); letter-spacing: .005em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gf-meta { font-size: 13px; line-height: 18px; letter-spacing: -.01em; color: var(--gf-ink-soft); white-space: nowrap; }
 .gf-label .ph { color: var(--badge-new); }

@@ -365,6 +365,7 @@ idle(() => {
   if ($('[data-stage]')) import('./scene.js').then((m) => m.initScenes()).catch((err) => { document.documentElement.classList.add('no-webgl'); console.error('[Websign 3D]', err); });
   if ($('[data-folders]')) import('./glass-folder.js').then((m) => m.initFolders(config, track)).catch((err) => console.error('[Websign Projekte]', err));
   if ($('[data-lens-carousel]')) near('[data-lens-carousel]', () => import('./curved-carousel.js').then((m) => m.mountLensCarousels()).catch((err) => console.error('[Websign Karussell]', err)));
+  if ($('[data-scrub-video]')) near('[data-scrub-video]', () => import('./video-scrub.js').then((m) => m.initVideoScrub(track)).catch((err) => console.error('[Websign Video-Szene]', err)));
   if ($('[data-config-form]')) near('[data-config-form]', () => import('./configurator.js').then((m) => m.initConfigurator(config, track)).catch((err) => console.error('[Websign Konfigurator]', err)));
   if ($('[data-kf], [data-kf-preset]')) import('./motion.js').then((m) => m.initMotion()).catch((err) => console.error('[Websign Motion]', err));
   if ($('[data-count-to]')) import('./count.js').then((m) => m.initCount()).catch((err) => console.error('[Websign Zähler]', err));

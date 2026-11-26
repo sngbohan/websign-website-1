@@ -119,8 +119,8 @@ const CSS =
   ".clc-grain{position:absolute;inset:0;opacity:.07;mix-blend-mode:overlay;pointer-events:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")}" +
   ".clc-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:pan-y}" +
   ".clc-canvas:active{cursor:grabbing}" +
-  ".clc-top{position:absolute;left:clamp(20px,4vw,48px);right:clamp(20px,4vw,48px);top:clamp(18px,3.4vw,36px);display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:var(--weight-medium,560);letter-spacing:.16em;text-transform:uppercase;color:var(--clc-ink);opacity:.62;pointer-events:none}" +
-  ".clc-top b{font-weight:var(--weight-bold,680);letter-spacing:.14em}" +
+  ".clc-top{position:absolute;left:clamp(20px,4vw,48px);right:clamp(20px,4vw,48px);top:clamp(18px,3.4vw,36px);display:flex;justify-content:flex-end;align-items:center;font-size:12px;font-weight:var(--weight-medium,560);letter-spacing:.16em;text-transform:uppercase;color:var(--clc-ink);opacity:.62;pointer-events:none}" +
+  '.clc-arc{position:absolute;left:50%;top:var(--clc-card-top,24%);width:min(600px,92%);aspect-ratio:600/90;transform:translate(-50%,-100%);overflow:visible;pointer-events:none;fill:var(--clc-ink);font-size:25px;font-weight:var(--weight-bold,680);letter-spacing:.14em;text-transform:uppercase}' +
   ".clc-copy{position:absolute;left:clamp(20px,4vw,48px);bottom:clamp(22px,4vw,44px);max-width:min(760px,70%);color:var(--clc-ink);pointer-events:none}" +
   ".clc-kicker{display:block;font-size:12px;font-weight:var(--weight-medium,560);letter-spacing:.16em;text-transform:uppercase;opacity:.6;margin-bottom:10px}" +
   ".clc-title{font-family:var(--clc-font);font-weight:var(--weight-bold,680);font-size:var(--hero-size,clamp(42px,6vw,88px));line-height:1;letter-spacing:-.035em;margin:0;display:block}" +
@@ -175,46 +175,6 @@ function grid(segX: number, segY: number): Float32Array {
   return new Float32Array(out)
 }
 
-function Chars({ text, base }: { text: string; base: number }) {
-  return (
-    <>
-      {text.split(" ").map((word, w, all) => (
-        <React.Fragment key={w}>
-          <span style={{ display: "inline-block", whiteSpace: "nowrap" }}>
-            {word.split("").map((ch, i) => (
-              <span key={i} className="clc-ch" style={{ transitionDelay: base + (all.slice(0, w).join(" ").length + i) * 24 + "ms" }}>
-                {ch}
-              </span>
-            ))}
-          </span>
-          {w < all.length - 1 ? " " : null}
-        </React.Fragment>
-      ))}
-    </>
-  )
-}
-
-/** Der Textblock. Wird pro Folie neu eingehängt und im nächsten Frame umgeschaltet, damit die Buchstaben aufsteigen. */
-function Copy({ slide, shown }: { slide: LensSlide; shown: boolean }) {
-  const [on, setOn] = React.useState(false)
-  React.useEffect(() => {
-    if (!shown) return
-    const id = requestAnimationFrame(() => requestAnimationFrame(() => setOn(true)))
-    return () => cancelAnimationFrame(id)
-  }, [shown])
-  return (
-    <div className={"clc-copy" + (on ? " clc-in" : "")} aria-live="polite">
-      {slide.kicker ? <span className="clc-kicker">{slide.kicker}</span> : null}
-      <h3 className="clc-title">
-        <span className="clc-line">
-          <Chars text={slide.title} base={60} />
-        </span>
-      </h3>
-      {slide.caption ? <span className="clc-cap">{slide.caption}</span> : null}
-    </div>
-  )
-}
-
 export default function CurvedLensCarousel({
   slides,
   label = "Websign",
@@ -230,7 +190,7 @@ export default function CurvedLensCarousel({
   const rootRef = React.useRef(null as HTMLDivElement | null)
   const canvasRef = React.useRef(null as HTMLCanvasElement | null)
   const [index, setIndex] = React.useState(0)
-  const [shown, setShown] = React.useState(false)
+  const [, setShown] = React.useState(false)
   const [noGL, setNoGL] = React.useState(false)
   const api = React.useRef({ go: (_d: number) => {} })
   const onChangeRef = React.useRef(onChange)
@@ -301,6 +261,9 @@ export default function CurvedLensCarousel({
     let introStart = -1
     let dragging = false, dragX = 0, dragPos = 0, lastX = 0, lastT = 0, flick = 0
     let raf = 0, last = 0, visible = true, current = 0
+    // Selbstlauf: DRIFT in Folien pro Sekunde, nach jeder Bedienung kurz Pause.
+    const DRIFT = 0.12, PAUSE = 3000
+    let holdUntil = 0
 
     const resize = (w: number, h: number) => {
       W = Math.max(1, w)
@@ -309,7 +272,9 @@ export default function CurvedLensCarousel({
       canvas.width = Math.round(W * dpr)
       canvas.height = Math.round(H * dpr)
       ;[cw, ch] = cardSize(W, H)
-      gap = cw * 0.14
+      gap = cw * 0.42
+      // Oberkante der mittleren Karte (uLift hebt sie an), dort sitzt der gebogene Titel
+      root.style.setProperty("--clc-card-top", Math.round(H * (0.5 - (W < 640 ? 0.15 : 0.075)) - ch / 2) + "px")
       gl.viewport(0, 0, canvas.width, canvas.height)
       kick()
     }
@@ -353,6 +318,10 @@ export default function CurvedLensCarousel({
         if (reduced.matches) {
           pos = target
           vel = 0
+        } else if (now > holdUntil && Math.abs(target - pos) < 0.01 && Math.abs(vel) < 0.05) {
+          pos += DRIFT * dt
+          target = pos
+          vel = 0
         } else [pos, vel] = springStep(pos, vel, target, dt)
       }
       const idx = wrap(Math.round(pos), n)
@@ -362,7 +331,7 @@ export default function CurvedLensCarousel({
         onChangeRef.current?.(idx)
       }
       draw()
-      const settled = !dragging && Math.abs(target - pos) < 0.0005 && Math.abs(vel) < 0.001 && (intro >= 1 || reduced.matches)
+      const settled = !dragging && Math.abs(target - pos) < 0.0005 && Math.abs(vel) < 0.001 && reduced.matches
       if (settled) {
         pos = target
         draw()
@@ -375,6 +344,7 @@ export default function CurvedLensCarousel({
     }
 
     api.current.go = (dir: number) => {
+      holdUntil = performance.now() + PAUSE
       target = Math.round(target) + dir
       kick()
     }
@@ -404,6 +374,7 @@ export default function CurvedLensCarousel({
     const onUp = () => {
       if (!dragging) return
       dragging = false
+      holdUntil = performance.now() + PAUSE
       target = restFor(pos, flick)
       vel = flick
       kick()
@@ -474,10 +445,15 @@ export default function CurvedLensCarousel({
       {noGL ? <img className="clc-fallback" src={slide.image} alt={slide.alt ?? slide.title} /> : null}
       <div className="clc-grain" aria-hidden="true" />
       <div className="clc-top">
-        <b>{label}</b>
         <span>{hint}</span>
       </div>
-      <Copy key={index} slide={slide} shown={shown} />
+      <svg className="clc-arc" viewBox="0 0 600 90" aria-hidden="true">
+        <path id="clc-arc-path" d="M10 30Q300 84 590 30" fill="none" />
+        <text>
+          <textPath href="#clc-arc-path" startOffset="50%" textAnchor="middle">{label}</textPath>
+        </text>
+      </svg>
+      <h3 className="clc-sr">{slide.title}</h3>
       <div className="clc-ctl">
         <span className="clc-count">
           {pad2(index + 1)} <i>/ {pad2(n)}</i>
